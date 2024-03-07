@@ -1,0 +1,11 @@
+* Introduction
+HyprNixMacs is a configuration that centers around the usage of NixOS and Emacs.
+Note that at the time of writing, I use hyprland as my window manager, but that
+might change, and therefore hyprnixmacs may not be as accurate of a name.
+
+** Why Not EXWM?
+Because emacs is blocking, and I want to use wayland because it's much better and there's
+much less cruft.
+
+* Installation
+Simply clone this repository to ~/etc/nixos/~ and run ~sudo nixos-rebuild switch~.
