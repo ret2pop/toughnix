@@ -5,15 +5,16 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     home-manager = {
       url = "github:nix-community/home-manager/release-23.11";
-      # Here, `inputs.nixpkgs` of home-manager is kept consistent with
-      # the `inputs.nixpkgs` of the current flake,
-      # to avoid problems caused by different versions of nixpkgs.
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nur.url = "github:nix-community/NUR";
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, nur, ... }: {
+  outputs = inputs@{ nixpkgs, home-manager, nur, disko, ... }: {
     nixosConfigurations = {
       continuity = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -29,7 +30,7 @@
             imports = [ ];
           })
           ./configuration.nix
-
+          disko.nixosModules.disko
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;

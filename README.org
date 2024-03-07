@@ -8,4 +8,21 @@ Because emacs is blocking, and I want to use wayland because it's much better an
 much less cruft.
 
 * Installation
-Simply clone this repository to ~/etc/nixos/~ and run ~sudo nixos-rebuild switch~.
+Simply clone the contents of this repository to ~/etc/nixos/~ and run ~sudo nixos-rebuild switch~.
+Note that afterwards you will need a ~$HOME/.password-store~ in user ~preston~ which has
+an entry named ~Mail~, as well as a ~~/org/website/~ directory made by cloning my
+[[https://github.com/ret2pop/ret2pop-website][ret2pop website]] repository to that location. Here are all the commands:
+#+begin_src shell
+  # run as root
+  # create backup of hardware-configuration.nix and put it back there after
+  git clone https://github.com/ret2pop/hyprnixmacs.git /etc/nixos/
+  # put hardware-configuration.nix back in /etc/nixos
+  nixos-rebuild switch
+  su preston
+  # copy over gpg and ssh keys
+  git clone root@nullring.xyz:/var/git/password-store.git ~/.password-store/
+  mkdir ~/org
+  git clone https://github.com/ret2pop/ret2pop-website ~/org/website/
+  # get music and put it in ~/music
+#+end_src
+this process can be highly automated via [[https://github.com/nix-community/nixos-anywhere][NixOS Anywhere]].

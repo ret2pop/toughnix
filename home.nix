@@ -1072,7 +1072,7 @@
         "$mod, F, exec, firefox"
         "$mod, Return, exec, kitty"
         "$mod, E, exec, emacs"
-        "$mod, v, exec, vencorddesktop"
+        "$mod, v, exec, Discord"
         "$mod, d, exec, wofi --show run"
         ", Print, exec, grimblast copy area"
         "$mod, Q, killactive"
