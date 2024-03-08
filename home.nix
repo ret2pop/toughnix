@@ -43,7 +43,7 @@
     pkgs.mpc-cli
     pkgs.python3
     pkgs.ghostscript
-    pkgs.ollama
+    pkgs.hyprpaper
     (pkgs.nerdfonts.override { fonts = [ "Iosevka" ]; })
     (pkgs.discord.override {
       withOpenASAR = true;
@@ -79,7 +79,6 @@
       }
     '';
   };
-
 
   programs.mpv = {
     enable = true;
@@ -292,8 +291,8 @@
     enable = true;
     settings = {
       enable_audio_bell = false;
-      font_family = "Fira Code";
-      font_size = 12;
+      font_family = "Iosevka Nerd Font";
+      font_size = 14;
       confirm_os_window_close = -1;
       background_opacity = "0.9";
       # Catppuccin theme
@@ -425,106 +424,72 @@
           browser.safebrowsing.downloads.remote.enabled = false;
           permissions.default.desktop-notification = 2;
           permissions.default.geo = 2;
+          geo.provider.network.url = "https://location.services.mozilla.com/v1/geolocate?key=%MOZILLA_API_KEY%";
+          permissions.manager.defaultsUrl = "";
+          webchannel.allowObject.urlWhitelist = "";
+          datareporting.policy.dataSubmissionEnabled = false;
+          datareporting.healthreport.uploadEnabled = false;
+          toolkit.telemetry.unified = false;
+          toolkit.telemetry.enabled = false;
+          toolkit.telemetry.server = "data:,";
+          toolkit.telemetry.archive.enabled = false;
+          toolkit.telemetry.newProfilePing.enabled = false;
+          toolkit.telemetry.shutdownPingSender.enabled = false;
+          toolkit.telemetry.updatePing.enabled = false;
+          toolkit.telemetry.bhrPing.enabled = false;
+          toolkit.telemetry.firstShutdownPing.enabled = false;
+          toolkit.telemetry.coverage.opt-out = true;
+          toolkit.coverage.opt-out = true;
+          toolkit.coverage.endpoint.base = "";
+          browser.ping-centre.telemetry = false;
+          browser.newtabpage.activity-stream.feeds.telemetry = false;
+          browser.newtabpage.activity-stream.telemetry = false;
+          app.shield.optoutstudies.enabled = false;
+          app.normandy.enabled = false;
+          app.normandy.api_url = "";
+          breakpad.reportURL = "";
+          browser.tabs.crashReporting.sendReport = false;
+          browser.crashReports.unsubmittedCheck.autoSubmit2 = false;
+          captivedetect.canonicalURL = "";
+          network.captive-portal-service.enabled = false;
+          network.connectivity-service.enabled = false;
+          browser.privatebrowsing.vpnpromourl = "";
+          extensions.getAddons.showPane = false;
+          extensions.htmlaboutaddons.recommendations.enabled = false;
+          browser.discovery.enabled = false;
+          browser.shell.checkDefaultBrowser = false;
+          browser.newtabpage.activity-stream.asrouter.userprefs.cfr.addons = false;
+          browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features = false;
+          browser.preferences.moreFromMozilla = false;
+          browser.tabs.tabmanager.enabled = false;
+          browser.aboutConfig.showWarning = false;
+          browser.aboutwelcome.enabled = false;
+          toolkit.legacyUserProfileCustomizations.stylesheets = true;
+          browser.compactmode.show = true;
+          browser.display.focus_ring_on_anything = true;
+          browser.display.focus_ring_style = 0;
+          browser.display.focus_ring_width = 0;
+          layout.css.prefers-color-scheme.content-override = 2;
+          browser.privateWindowSeparation.enabled = false;
+          cookiebanners.service.mode = 1;
+          full-screen-api.transition-duration.enter = "0 0";
+          full-screen-api.transition-duration.leave = "0 0";
+          full-screen-api.warning.delay = -1;
+          full-screen-api.warning.timeout = 0;
+          browser.urlbar.suggest.calculator = true;
+          browser.urlbar.unitConversion.enabled = true;
+          browser.urlbar.trending.featureGate = false;
+          browser.newtabpage.activity-stream.feeds.topsites = false;
+          browser.newtabpage.activity-stream.feeds.section.topstories = false;
+          extensions.pocket.enabled = false;
+          browser.download.always_ask_before_handling_new_types = true;
+          browser.download.manager.addToRecentDocs = false;
+          browser.download.open_pdf_attachments_inline = true;
+          browser.bookmarks.openInTabClosesMenu = false;
+          browser.menu.showViewImageInfo = true;
+          findbar.highlightAll = true;
+          layout.word_select.eat_space_to_next_word = false;
         };
-        extraConfig = ''
-          user_pref("geo.provider.network.url", "https://location.services.mozilla.com/v1/geolocate?key=%MOZILLA_API_KEY%");
-          user_pref("permissions.manager.defaultsUrl", "");
-          user_pref("webchannel.allowObject.urlWhitelist", "");
-
-          /** TELEMETRY ***/
-          user_pref("datareporting.policy.dataSubmissionEnabled", false);
-          user_pref("datareporting.healthreport.uploadEnabled", false);
-          user_pref("toolkit.telemetry.unified", false);
-          user_pref("toolkit.telemetry.enabled", false);
-          user_pref("toolkit.telemetry.server", "data:,");
-          user_pref("toolkit.telemetry.archive.enabled", false);
-          user_pref("toolkit.telemetry.newProfilePing.enabled", false);
-          user_pref("toolkit.telemetry.shutdownPingSender.enabled", false);
-          user_pref("toolkit.telemetry.updatePing.enabled", false);
-          user_pref("toolkit.telemetry.bhrPing.enabled", false);
-          user_pref("toolkit.telemetry.firstShutdownPing.enabled", false);
-          user_pref("toolkit.telemetry.coverage.opt-out", true);
-          user_pref("toolkit.coverage.opt-out", true);
-          user_pref("toolkit.coverage.endpoint.base", "");
-          user_pref("browser.ping-centre.telemetry", false);
-          user_pref("browser.newtabpage.activity-stream.feeds.telemetry", false);
-          user_pref("browser.newtabpage.activity-stream.telemetry", false);
-
-          /** EXPERIMENTS ***/
-          user_pref("app.shield.optoutstudies.enabled", false);
-          user_pref("app.normandy.enabled", false);
-          user_pref("app.normandy.api_url", "");
-
-          /** CRASH REPORTS ***/
-          user_pref("breakpad.reportURL", "");
-          user_pref("browser.tabs.crashReporting.sendReport", false);
-          user_pref("browser.crashReports.unsubmittedCheck.autoSubmit2", false);
-
-          /** DETECTION ***/
-          user_pref("captivedetect.canonicalURL", "");
-          user_pref("network.captive-portal-service.enabled", false);
-          user_pref("network.connectivity-service.enabled", false);
-          /****************************************************************************
-           * SECTION: PESKYFOX                                                        *
-          ****************************************************************************/
-          /** MOZILLA UI ***/
-          /** format on save please? **/
-          user_pref("browser.privatebrowsing.vpnpromourl", "");
-          user_pref("extensions.getAddons.showPane", false);
-          user_pref("extensions.htmlaboutaddons.recommendations.enabled", false);
-          user_pref("browser.discovery.enabled", false);
-          user_pref("browser.shell.checkDefaultBrowser", false);
-          user_pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.addons", false);
-          user_pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features", false);
-          user_pref("browser.preferences.moreFromMozilla", false);
-          user_pref("browser.tabs.tabmanager.enabled", false);
-          user_pref("browser.aboutConfig.showWarning", false);
-          user_pref("browser.aboutwelcome.enabled", false);
-
-          /** THEME ADJUSTMENTS ***/
-          user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
-          user_pref("browser.compactmode.show", true);
-          user_pref("browser.display.focus_ring_on_anything", true);
-          user_pref("browser.display.focus_ring_style", 0);
-          user_pref("browser.display.focus_ring_width", 0);
-          user_pref("layout.css.prefers-color-scheme.content-override", 2);
-          user_pref("browser.privateWindowSeparation.enabled", false); // WINDOWS
-
-          /** COOKIE BANNER HANDLING ***/
-          user_pref("cookiebanners.service.mode", 1);
-          user_pref("cookiebanners.service.mode.privateBrowsing", 1);
-
-          /** FULLSCREEN NOTICE ***/
-          user_pref("full-screen-api.transition-duration.enter", "0 0");
-          user_pref("full-screen-api.transition-duration.leave", "0 0");
-          user_pref("full-screen-api.warning.delay", -1);
-          user_pref("full-screen-api.warning.timeout", 0);
-
-          /** URL BAR ***/
-          user_pref("browser.urlbar.suggest.calculator", true);
-          user_pref("browser.urlbar.unitConversion.enabled", true);
-          user_pref("browser.urlbar.trending.featureGate", false);
-
-          /** NEW TAB PAGE ***/
-          user_pref("browser.newtabpage.activity-stream.feeds.topsites", false);
-          user_pref("browser.newtabpage.activity-stream.feeds.section.topstories", false);
-
-          /** POCKET ***/
-          user_pref("extensions.pocket.enabled", false);
-
-          /** DOWNLOADS ***/
-          user_pref("browser.download.always_ask_before_handling_new_types", true);
-          user_pref("browser.download.manager.addToRecentDocs", false);
-
-          /** PDF ***/
-          user_pref("browser.download.open_pdf_attachments_inline", true);
-
-          /** TAB BEHAVIOR ***/
-          user_pref("browser.bookmarks.openInTabClosesMenu", false);
-          user_pref("browser.menu.showViewImageInfo", true);
-          user_pref("findbar.highlightAll", true);
-          user_pref("layout.word_select.eat_space_to_next_word", false);
-        '';
       };
     };
   };
@@ -933,32 +898,6 @@
   programs.bash = {
     enable = true;
   };
-
-  # programs.qutebrowser = {
-  #   enable = true;
-  #   searchEngines = {
-  #     w = "https://en.wikipedia.org/wiki/Special:Search?search={}&amp;go=Go&amp;ns0=1";
-  #     aw = "https://wiki.archlinux.org/?search={}";
-  #     nw = "https://nixos.wiki/index.php?search={}";
-  #     g = "https://www.google.com/search?hl=en&amp;q={}";
-  #     DEFAULT = "https://www.google.com/search?hl=en&amp;q={}";
-  #   };
-  #   settings = { };
-  #   extraConfig = ''
-  #     import os
-  #     from urllib.request import urlopen
-
-  #     if not os.path.exists(config.configdir / "theme.py"):
-  #         theme = "https://raw.githubusercontent.com/catppuccin/qutebrowser/main/setup.py"
-  #         with urlopen(theme) as themehtml:
-  #             with open(config.configdir / "theme.py", "a") as file:
-  #                 file.writelines(themehtml.read().decode("utf-8"))
-
-  #     if os.path.exists(config.configdir / "theme.py"):
-  #         import theme
-  #         theme.setup(c, 'mocha', True)
-  #   '';
-  # };
 
   programs.git = {
     enable = true;

@@ -6,6 +6,7 @@
       ./hardware-configuration.nix
     ];
 
+  nix.settings.experimental-features = "nix-command flakes";
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
@@ -25,6 +26,10 @@
     layout = "us";
     xkbVariant = "";
     xkbOptions = "caps:escape";
+  };
+
+  services.ollama = {
+    enable = true;
   };
 
   services.printing.enable = true;
