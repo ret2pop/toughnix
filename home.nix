@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, lib, nixpkgs, pkgs, wallpapers, ... }:
 {
   home.username = "preston";
   home.homeDirectory = "/home/preston";
@@ -7,9 +7,8 @@
     pkgs.git
     pkgs.curl
     pkgs.wget
-    pkgs.neofetch
+    pkgs.pfetch
     pkgs.cowsay
-    pkgs.kitty
     pkgs.ffmpeg
     pkgs.hyprland
     pkgs.grim
@@ -22,7 +21,6 @@
     pkgs.nixpkgs-fmt
     pkgs.mu
     pkgs.rust-analyzer
-    pkgs.rustc
     pkgs.cargo
     pkgs.rnix-lsp
     pkgs.clang
@@ -34,7 +32,6 @@
     pkgs.texliveFull
     pkgs.helvum
     pkgs.xdg-utils
-    pkgs.ncmpcpp
     pkgs.noto-fonts
     pkgs.noto-fonts-cjk
     pkgs.autobuild
@@ -44,9 +41,9 @@
     pkgs.fswebcam
     pkgs.nmap
     pkgs.mpc-cli
-    pkgs.yt-dlp
-    pkgs.mpv
     pkgs.python3
+    pkgs.ghostscript
+    pkgs.ollama
     (pkgs.nerdfonts.override { fonts = [ "Iosevka" ]; })
     (pkgs.discord.override {
       withOpenASAR = true;
@@ -81,6 +78,28 @@
         name "pipewire output"
       }
     '';
+  };
+
+
+  programs.mpv = {
+    enable = true;
+    config = {
+      profile = "gpu-hq";
+      force-window = true;
+      ytdl-format = "bestvideo+bestaudio";
+      cache-default = 4000000;
+    };
+  };
+
+  programs.yt-dlp = {
+    enable = true;
+    settings = {
+      embed-thumbnail = true;
+      embed-subs = true;
+      sub-langs = "all";
+      downloader = "aria2c";
+      downloader-args = "aria2c:'-c -x8 -s8 -k1M'";
+    };
   };
 
   programs.wofi = {
@@ -277,80 +296,49 @@
       font_size = 12;
       confirm_os_window_close = -1;
       background_opacity = "0.9";
+      # Catppuccin theme
+      foreground = "#cdd6f4";
+      background = "#1e1e2e";
+      selection_foreground = "#1e1e2e";
+      selection_background = "#f5e0dc";
+      cursor = "#f5e0dc";
+      cursor_text_color = "#1e1e2e";
+      url_color = "#f5e0dc";
+      active_border_color = "#B4BEFE";
+      inactive_border_color = "#6C7086";
+      bell_border_color = "#F9E2AF";
+      wayland_titlebar_color = "#1E1E2E";
+      macos_titlebar_color = "#1E1E2E";
+      active_tab_foreground = "#11111B";
+      active_tab_background = "#CBA6F7";
+      inactive_tab_foreground = "#CDD6F4";
+      inactive_tab_background = "#181825";
+      tab_bar_background = "#11111B";
+      mark1_foreground = "#1E1E2E";
+      mark1_background = "#B4BEFE";
+      mark2_foreground = "#1E1E2E";
+      mark2_background = "#CBA6F7";
+      mark3_foreground = "#1E1E2E";
+      mark3_background = "#74C7EC";
+      color0 = "#45475A";
+      color8 = "#585B70";
+      color1 = "#F38BA8";
+      color9 = "#F38BA8";
+      color2 = "#A6E3A1";
+      color10 = "#A6E3A1";
+      color3 = "#F9E2AF";
+      color11 = "#F9E2AF";
+      color4 = "#89B4FA";
+      color12 = "#89B4FA";
+      color5 = "#F5C2E7";
+      color13 = "#F5C2E7";
+      color6 = "#94E2D5";
+      color14 = "#94E2D5";
+      color7 = "#BAC2DE";
+      color15 = "#A6ADC8";
     };
-    extraConfig = ''
-      # The basic colors
-      foreground              #CDD6F4
-      background              #1E1E2E
-      selection_foreground    #1E1E2E
-      selection_background    #F5E0DC
-
-      # Cursor colors
-      cursor                  #F5E0DC
-      cursor_text_color       #1E1E2E
-
-      # URL underline color when hovering with mouse
-      url_color               #F5E0DC
-
-      # Kitty window border colors
-      active_border_color     #B4BEFE
-      inactive_border_color   #6C7086
-      bell_border_color       #F9E2AF
-
-      # OS Window titlebar colors
-      wayland_titlebar_color  #1E1E2E
-      macos_titlebar_color    #1E1E2E
-
-      # Tab bar colors
-      active_tab_foreground   #11111B
-      active_tab_background   #CBA6F7
-      inactive_tab_foreground #CDD6F4
-      inactive_tab_background #181825
-      tab_bar_background      #11111B
-
-      # Colors for marks (marked text in the terminal)
-      mark1_foreground #1E1E2E
-      mark1_background #B4BEFE
-      mark2_foreground #1E1E2E
-      mark2_background #CBA6F7
-      mark3_foreground #1E1E2E
-      mark3_background #74C7EC
-
-      # The 16 terminal colors
-
-      # black
-      color0 #45475A
-      color8 #585B70
-
-      # red
-      color1 #F38BA8
-      color9 #F38BA8
-
-      # green
-      color2  #A6E3A1
-      color10 #A6E3A1
-
-      # yellow
-      color3  #F9E2AF
-      color11 #F9E2AF
-
-      # blue
-      color4  #89B4FA
-      color12 #89B4FA
-
-      # magenta
-      color5  #F5C2E7
-      color13 #F5C2E7
-
-      # cyan
-      color6  #94E2D5
-      color14 #94E2D5
-
-      # white
-      color7  #BAC2DE
-      color15 #A6ADC8
-    '';
   };
+
   programs.firefox = {
     policies = {
       EnableTrackingProtection = true;
@@ -368,142 +356,77 @@
           firefox-color
           vimium
         ];
+        settings = {
+          content.notify.interval = 100000;
+          gfx.canvas.accelerated.cache-items = 4096;
+          gfx.canvas.accelerated.cache-size = 512;
+          gfx.content.skia-font-cache-size = 20;
+          browser.cache.jsbc_compression_level = 3;
+          media.memory_cache_max_size = 65536;
+          media.cache_readahead_limit = 7200;
+          media.cache_resume_threshold = 3600;
+          image.mem.decode_bytes_at_a_time = 32768;
+          network.buffer.cache.size = 262144;
+          network.buffer.cache.count = 128;
+          network.http.max-connections = 1800;
+          network.http.max-persistent-connections-per-server = 10;
+          network.http.max-urgent-start-excessive-connections-per-host = 5;
+          network.http.pacing.requests.enabled = false;
+          network.dnsCacheExpiration = 3600;
+          network.dns.max_high_priority_threads = 8;
+          network.ssl_tokens_cache_capacity = 10240;
+          network.dns.disablePrefetch = true;
+          network.prefetch-next = false;
+          network.predictor.enabled = false;
+          layout.css.grid-template-masonry-value.enabled = true;
+          dom.enable_web_task_scheduling = true;
+          layout.css.has-selector.enabled = true;
+          dom.security.sanitizer.enabled = true;
+          browser.contentblocking.category = "strict";
+          urlclassifier.trackingSkipURLs = "*.reddit.com, *.twitter.com, *.twimg.com, *.tiktok.com";
+          urlclassifier.features.socialtracking.skipURLs = "*.instagram.com, *.twitter.com, *.twimg.com";
+          network.cookie.sameSite.noneRequiresSecure = true;
+          browser.download.start_downloads_in_tmp_dir = true;
+          browser.helperApps.deleteTempFileOnExit = true;
+          browser.uitour.enabled = false;
+          privacy.globalprivacycontrol.enabled = true;
+          security.OCSP.enabled = 0;
+          security.remote_settings.crlite_filters.enabled = true;
+          security.pki.crlite_mode = 2;
+          security.ssl.treat_unsafe_negotiation_as_broken = true;
+          browser.xul.error_pages.expert_bad_cert = true;
+          security.tls.enable_0rtt_data = false;
+          browser.privatebrowsing.forceMediaMemoryCache = true;
+          browser.sessionstore.interval = 60000;
+          privacy.history.custom = true;
+          browser.search.separatePrivateDefault.ui.enabled = true;
+          browser.urlbar.update2.engineAliasRefresh = true;
+          browser.search.suggest.enabled = false;
+          browser.urlbar.suggest.quicksuggest.sponsored = false;
+          browser.urlbar.suggest.quicksuggest.nonsponsored = false;
+          browser.formfill.enable = false;
+          security.insecure_connection_text.enabled = true;
+          security.insecure_connection_text.pbmode.enabled = true;
+          network.IDN_show_punycode = true;
+          dom.security.https_first = true;
+          dom.security.https_first_schemeless = true;
+          signon.formlessCapture.enabled = false;
+          signon.privateBrowsingCapture.enabled = false;
+          network.auth.subresource-http-auth-allow = 1;
+          editor.truncate_user_pastes = false;
+          security.mixed_content.block_display_content = true;
+          security.mixed_content.upgrade_display_content = true;
+          pdfjs.enableScripting = false;
+          extensions.postDownloadThirdPartyPrompt = false;
+          network.http.referer.XOriginTrimmingPolicy = 2;
+          privacy.userContext.ui.enabled = true;
+          media.peerconnection.ice.proxy_only_if_behind_proxy = true;
+          media.peerconnection.ice.default_address_only = true;
+          browser.safebrowsing.downloads.remote.enabled = false;
+          permissions.default.desktop-notification = 2;
+          permissions.default.geo = 2;
+        };
         extraConfig = ''
-          //
-          /* You may copy+paste this file and use it as it is.
-           *
-           * If you make changes to your about:config while the program is running, the
-           * changes will be overwritten by the user.js when the application restarts.
-           *
-           * To make lasting changes to preferences, you will have to edit the user.js.
-           */
-
-          /****************************************************************************
-           * Betterfox                                                                *
-           * "Ad meliora"                                                             *
-           * version: 122                                                             *
-           * url: https://github.com/yokoffing/Betterfox                              *
-          ****************************************************************************/
-
-          /****************************************************************************
-           * SECTION: FASTFOX                                                         *
-          ****************************************************************************/
-          /** GENERAL ***/
-          user_pref("content.notify.interval", 100000);
-
-          /** GFX ***/
-          user_pref("gfx.canvas.accelerated.cache-items", 4096);
-          user_pref("gfx.canvas.accelerated.cache-size", 512);
-          user_pref("gfx.content.skia-font-cache-size", 20);
-
-          /** DISK CACHE ***/
-          user_pref("browser.cache.jsbc_compression_level", 3);
-
-          /** MEDIA CACHE ***/
-          user_pref("media.memory_cache_max_size", 65536);
-          user_pref("media.cache_readahead_limit", 7200);
-          user_pref("media.cache_resume_threshold", 3600);
-
-          /** IMAGE CACHE ***/
-          user_pref("image.mem.decode_bytes_at_a_time", 32768);
-
-          /** NETWORK ***/
-          user_pref("network.buffer.cache.size", 262144);
-          user_pref("network.buffer.cache.count", 128);
-          user_pref("network.http.max-connections", 1800);
-          user_pref("network.http.max-persistent-connections-per-server", 10);
-          user_pref("network.http.max-urgent-start-excessive-connections-per-host", 5);
-          user_pref("network.http.pacing.requests.enabled", false);
-          user_pref("network.dnsCacheExpiration", 3600);
-          user_pref("network.dns.max_high_priority_threads", 8);
-          user_pref("network.ssl_tokens_cache_capacity", 10240);
-
-          /** SPECULATIVE LOADING ***/
-          user_pref("network.dns.disablePrefetch", true);
-          user_pref("network.prefetch-next", false);
-          user_pref("network.predictor.enabled", false);
-
-          /** EXPERIMENTAL ***/
-          user_pref("layout.css.grid-template-masonry-value.enabled", true);
-          user_pref("dom.enable_web_task_scheduling", true);
-          user_pref("layout.css.has-selector.enabled", true);
-          user_pref("dom.security.sanitizer.enabled", true);
-
-          /****************************************************************************
-           * SECTION: SECUREFOX                                                       *
-          ****************************************************************************/
-          /** TRACKING PROTECTION ***/
-          user_pref("browser.contentblocking.category", "strict");
-          user_pref("urlclassifier.trackingSkipURLs", "*.reddit.com, *.twitter.com, *.twimg.com, *.tiktok.com");
-          user_pref("urlclassifier.features.socialtracking.skipURLs", "*.instagram.com, *.twitter.com, *.twimg.com");
-          user_pref("network.cookie.sameSite.noneRequiresSecure", true);
-          user_pref("browser.download.start_downloads_in_tmp_dir", true);
-          user_pref("browser.helperApps.deleteTempFileOnExit", true);
-          user_pref("browser.uitour.enabled", false);
-          user_pref("privacy.globalprivacycontrol.enabled", true);
-
-          /** OCSP & CERTS / HPKP ***/
-          user_pref("security.OCSP.enabled", 0);
-          user_pref("security.remote_settings.crlite_filters.enabled", true);
-          user_pref("security.pki.crlite_mode", 2);
-
-          /** SSL / TLS ***/
-          user_pref("security.ssl.treat_unsafe_negotiation_as_broken", true);
-          user_pref("browser.xul.error_pages.expert_bad_cert", true);
-          user_pref("security.tls.enable_0rtt_data", false);
-
-          /** DISK AVOIDANCE ***/
-          user_pref("browser.privatebrowsing.forceMediaMemoryCache", true);
-          user_pref("browser.sessionstore.interval", 60000);
-
-          /** SHUTDOWN & SANITIZING ***/
-          /** L **/
-          user_pref("privacy.history.custom", true);
-
-          /** SEARCH / URL BAR ***/
-          user_pref("browser.search.separatePrivateDefault.ui.enabled", true);
-          user_pref("browser.urlbar.update2.engineAliasRefresh", true);
-          user_pref("browser.search.suggest.enabled", false);
-          user_pref("browser.urlbar.suggest.quicksuggest.sponsored", false);
-          user_pref("browser.urlbar.suggest.quicksuggest.nonsponsored", false);
-          user_pref("browser.formfill.enable", false);
-          user_pref("security.insecure_connection_text.enabled", true);
-          user_pref("security.insecure_connection_text.pbmode.enabled", true);
-          user_pref("network.IDN_show_punycode", true);
-
-          /** HTTPS-FIRST POLICY ***/
-          user_pref("dom.security.https_first", true);
-          user_pref("dom.security.https_first_schemeless", true);
-
-          /** PASSWORDS ***/
-          user_pref("signon.formlessCapture.enabled", false);
-          user_pref("signon.privateBrowsingCapture.enabled", false);
-          user_pref("network.auth.subresource-http-auth-allow", 1);
-          user_pref("editor.truncate_user_pastes", false);
-
-          /** MIXED CONTENT + CROSS-SITE ***/
-          user_pref("security.mixed_content.block_display_content", true);
-          user_pref("security.mixed_content.upgrade_display_content", true);
-          user_pref("security.mixed_content.upgrade_display_content.image", true);
-          user_pref("pdfjs.enableScripting", false);
-          user_pref("extensions.postDownloadThirdPartyPrompt", false);
-
-          /** HEADERS / REFERERS ***/
-          user_pref("network.http.referer.XOriginTrimmingPolicy", 2);
-
-          /** CONTAINERS ***/
-          user_pref("privacy.userContext.ui.enabled", true);
-
-          /** WEBRTC ***/
-          user_pref("media.peerconnection.ice.proxy_only_if_behind_proxy", true);
-          user_pref("media.peerconnection.ice.default_address_only", true);
-
-          /** SAFE BROWSING ***/
-          user_pref("browser.safebrowsing.downloads.remote.enabled", false);
-
-          /** MOZILLA ***/
-          user_pref("permissions.default.desktop-notification", 2);
-          user_pref("permissions.default.geo", 2);
           user_pref("geo.provider.network.url", "https://location.services.mozilla.com/v1/geolocate?key=%MOZILLA_API_KEY%");
           user_pref("permissions.manager.defaultsUrl", "");
           user_pref("webchannel.allowObject.urlWhitelist", "");
@@ -541,7 +464,6 @@
           user_pref("captivedetect.canonicalURL", "");
           user_pref("network.captive-portal-service.enabled", false);
           user_pref("network.connectivity-service.enabled", false);
-
           /****************************************************************************
            * SECTION: PESKYFOX                                                        *
           ****************************************************************************/
@@ -887,6 +809,9 @@
     initExtra = ''
       source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
     '';
+    localVariables = {
+      EDITOR = "emacsclient -n --alternate-editor=vim";
+    };
     shellAliases = {
       c = "clear";
       g = "git";
@@ -933,7 +858,6 @@
       epkgs.company
       epkgs.pinentry
       epkgs.pdf-tools
-      epkgs.circe
       epkgs.ivy-pass
       epkgs.magit-delta
       epkgs.sudo-edit
@@ -946,7 +870,8 @@
       epkgs.ement
       epkgs.rustic
       epkgs.chatgpt-shell
-
+      epkgs.ellama
+      epkgs.latex-preview-pane
     ];
   };
 
@@ -1009,31 +934,32 @@
     enable = true;
   };
 
-  programs.qutebrowser = {
-    enable = true;
-    searchEngines = {
-      w = "https://en.wikipedia.org/wiki/Special:Search?search={}&amp;go=Go&amp;ns0=1";
-      aw = "https://wiki.archlinux.org/?search={}";
-      nw = "https://nixos.wiki/index.php?search={}";
-      g = "https://www.google.com/search?hl=en&amp;q={}";
-      DEFAULT = "https://www.google.com/search?hl=en&amp;q={}";
-    };
-    settings = { };
-    extraConfig = ''
-      import os
-      from urllib.request import urlopen
+  # programs.qutebrowser = {
+  #   enable = true;
+  #   searchEngines = {
+  #     w = "https://en.wikipedia.org/wiki/Special:Search?search={}&amp;go=Go&amp;ns0=1";
+  #     aw = "https://wiki.archlinux.org/?search={}";
+  #     nw = "https://nixos.wiki/index.php?search={}";
+  #     g = "https://www.google.com/search?hl=en&amp;q={}";
+  #     DEFAULT = "https://www.google.com/search?hl=en&amp;q={}";
+  #   };
+  #   settings = { };
+  #   extraConfig = ''
+  #     import os
+  #     from urllib.request import urlopen
 
-      if not os.path.exists(config.configdir / "theme.py"):
-          theme = "https://raw.githubusercontent.com/catppuccin/qutebrowser/main/setup.py"
-          with urlopen(theme) as themehtml:
-              with open(config.configdir / "theme.py", "a") as file:
-                  file.writelines(themehtml.read().decode("utf-8"))
+  #     if not os.path.exists(config.configdir / "theme.py"):
+  #         theme = "https://raw.githubusercontent.com/catppuccin/qutebrowser/main/setup.py"
+  #         with urlopen(theme) as themehtml:
+  #             with open(config.configdir / "theme.py", "a") as file:
+  #                 file.writelines(themehtml.read().decode("utf-8"))
 
-      if os.path.exists(config.configdir / "theme.py"):
-          import theme
-          theme.setup(c, 'mocha', True)
-    '';
-  };
+  #     if os.path.exists(config.configdir / "theme.py"):
+  #         import theme
+  #         theme.setup(c, 'mocha', True)
+  #   '';
+  # };
+
   programs.git = {
     enable = true;
     userName = "Preston Pan";
@@ -1059,21 +985,25 @@
     systemd.enable = true;
     settings = {
       "$mod" = "SUPER";
-
       exec-once = [
         "waybar"
         "swww init"
-        "swww img /home/preston/wallpapers/bigrobot.png"
+        "swww img ${wallpapers}/bigrobot.png"
       ];
       blurls = [
         "waybar"
+      ];
+      windowrule = [
+        "workspace 1, ^(.*emacs.*)$"
+        "workspace 2, ^(.*firefox.*)$"
+        "workspace 3, ^(.*discord.*)$"
       ];
       bind = [
         "$mod, F, exec, firefox"
         "$mod, Return, exec, kitty"
         "$mod, E, exec, emacs"
-        "$mod, v, exec, Discord"
-        "$mod, d, exec, wofi --show run"
+        "$mod, V, exec, Discord"
+        "$mod, D, exec, wofi --show run"
         ", Print, exec, grimblast copy area"
         "$mod, Q, killactive"
         "$mod SHIFT, H, movewindow, l"
@@ -1084,6 +1014,8 @@
         "$mod, L, movefocus, r"
         "$mod, K, movefocus, u"
         "$mod, J, movefocus, d"
+        ", XF86AudioPlay, exec, mpc toggle"
+        ", Print, exec, grim"
       ]
       ++ (
         builtins.concatLists (builtins.genList
@@ -1103,6 +1035,17 @@
           )
           10)
       );
+      bindm = [
+        "$mod, mouse:272, movewindow"
+        "$mod, mouse:273, resizewindow"
+        "$mod ALT, mouse:272, resizewindow"
+      ];
+      binde = [
+        ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+"
+        ", XF86AudioLowerVolume, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%-"
+        ", XF86AudioNext, exec, mpc next"
+        ", XF86AudioPrev, exec, mpc prev"
+      ];
       decoration = {
         blur = {
           enabled = true;
@@ -1118,18 +1061,11 @@
         repeat_delay = 300;
         repeat_rate = 50;
       };
-      bindm = [
-        "$mod, mouse:272, movewindow"
-        "$mod, mouse:273, resizewindow"
-        "$mod ALT, mouse:272, resizewindow"
-      ];
-      binde = [
-        ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+"
-        ", XF86AudioLowerVolume, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%-"
-        ", XF86AudioPlay, exec, mpc toggle"
-        ", XF86AudioNext, exec, mpc next"
-        ", XF86AudioPrev, exec, mpc prev"
-      ];
+      misc = {
+        force_hypr_chan = false;
+        force_default_wallpaper = 0;
+        disable_hyprland_logo = true;
+      };
     };
   };
   programs.home-manager.enable = true;

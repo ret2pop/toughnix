@@ -12,30 +12,33 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    wallpapers.url = "github:ret2pop/wallpapers";
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, nur, disko, ... }: {
+  outputs = { self, nixpkgs, home-manager, nur, disko, wallpapers, ... }@attrs: {
     nixosConfigurations = {
       continuity = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        specialArgs = attrs;
         modules = [
           { nixpkgs.overlays = [ nur.overlay ]; }
           ({ pkgs, ... }:
-          let
-            nur-no-pkgs = import nur {
-              inherit pkgs;
-              nurpkgs = import nixpkgs { system = "x86_64-linux"; };
-            };
-          in {
-            imports = [ ];
-          })
+            let
+              nur-no-pkgs = import nur {
+                inherit pkgs;
+                nurpkgs = import nixpkgs { system = "x86_64-linux"; };
+              };
+            in
+            {
+              imports = [ ];
+            })
           ./configuration.nix
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
+            home-manager.extraSpecialArgs = attrs;
             home-manager.useUserPackages = true;
-
             home-manager.users.preston = import ./home.nix;
           }
         ];
