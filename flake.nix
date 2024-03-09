@@ -14,9 +14,10 @@
     };
     wallpapers.url = "github:ret2pop/wallpapers";
     sops-nix.url = "github:Mic92/sops-nix";
+    scripts.url = "github:ret2pop/scripts";
   };
 
-  outputs = { self, nixpkgs, home-manager, nur, disko, wallpapers, sops-nix, ... }@attrs: {
+  outputs = { self, nixpkgs, home-manager, nur, disko, wallpapers, sops-nix, scripts, ... }@attrs: {
     nixosConfigurations = {
       continuity = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";

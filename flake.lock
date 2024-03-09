@@ -110,8 +110,24 @@
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
         "nur": "nur",
+        "scripts": "scripts",
         "sops-nix": "sops-nix",
         "wallpapers": "wallpapers"
+      }
+    },
+    "scripts": {
+      "locked": {
+        "lastModified": 1709958643,
+        "narHash": "sha256-+NHuHYUTUkjIOaCZlH7gICDwRu2dMgJ6smmU9DvgLT0=",
+        "owner": "ret2pop",
+        "repo": "scripts",
+        "rev": "8e230dcb118d5a25629c1980a4764ae071bfb2bf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ret2pop",
+        "repo": "scripts",
+        "type": "github"
       }
     },
     "sops-nix": {

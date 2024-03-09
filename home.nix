@@ -1,4 +1,4 @@
-{ config, lib, nixpkgs, pkgs, wallpapers, ... }:
+{ config, lib, nixpkgs, pkgs, wallpapers, scripts, ... }:
 {
   home.username = "preston";
   home.homeDirectory = "/home/preston";
@@ -944,6 +944,7 @@
         "$mod, E, exec, emacs"
         "$mod, V, exec, Discord"
         "$mod, D, exec, wofi --show run"
+        "$mod, P, exec, bash ${scripts}/powermenu.sh"
         "$mod, Q, killactive"
         "$mod SHIFT, H, movewindow, l"
         "$mod SHIFT, L, movewindow, r"
