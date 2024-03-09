@@ -44,6 +44,8 @@
     pkgs.python3
     pkgs.ghostscript
     pkgs.hyprpaper
+    pkgs.pipes
+    pkgs.cmatrix
     (pkgs.nerdfonts.override { fonts = [ "Iosevka" ]; })
     (pkgs.discord.override {
       withOpenASAR = true;
@@ -115,7 +117,7 @@
       hide_scroll = true;
       print_command = true;
       insensitive = true;
-      prompt = "";
+      prompt = "Run what, Commander?";
       columns = 2;
     };
 
@@ -783,6 +785,7 @@
       g = "git";
       v = "vim";
       h = "Hyprland";
+      r = "gammastep -O 3000";
     };
   };
 
@@ -985,6 +988,8 @@
         ", XF86AudioLowerVolume, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%-"
         ", XF86AudioNext, exec, mpc next"
         ", XF86AudioPrev, exec, mpc prev"
+        ", XF86MonBrightnessUp , exec, light -A 10" 
+        ", XF86MonBrightnessDown, exec, light -U 10"
       ];
       decoration = {
         blur = {

@@ -58,7 +58,7 @@
   users.users.preston = {
     isNormalUser = true;
     description = "Preston Pan";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "video" ];
     shell = pkgs.zsh;
     packages = with pkgs; [
     ];
@@ -69,10 +69,11 @@
   environment.systemPackages = with pkgs; [
     nixpkgs-fmt
     rnix-lsp
-    light
     curl
     git
   ];
+
+  programs.light.enable = true;
 
   xdg.portal = {
     enable = true;

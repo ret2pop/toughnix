@@ -1,7 +1,8 @@
 * Introduction
 HyprNixMacs is a configuration that centers around the usage of NixOS and Emacs.
 Note that at the time of writing, I use hyprland as my window manager, but that
-might change, and therefore hyprnixmacs may not be as accurate of a name.
+might change, and therefore hyprnixmacs may not be as accurate of a name. This
+entire configuration uses the [[https://github.com/catppuccin/catppuccin][catppuccin theme]].
 
 ** Why Not EXWM?
 Because emacs is blocking, and I want to use wayland because it's much better and there's
@@ -47,6 +48,7 @@ Win + e => emacs
 Win + w => firefox
 Win + v => discord
 Win + d => wofi (Run Launcher)
+Win + p => wofi (Powermenu)
 PrintScr => grim (screenshot; look for file in $HOME)
 #+end_example
 **** Commands
@@ -118,6 +120,45 @@ This will be quite the large section as there will be much to explain. Just clon
 then restart. This will make emacs look not ugly. Then, if you cloned my website, everything should work, although
 you should remove my journal entries and all my files in ~mindmap~ and replace them with your own.
 *** Keybindings
+These are the keybindings that I have set up for emacs. All the other keybindings are ones that are default
+to the packages installed or the builtin emacs keybindings. Note that I also use evil-mode, so you're going
+to have to know vim keybindings.
+#+begin_example
+  SPC o a org-agenda
+  SPC c b counsel-bookmark
+  SPC o c org-capture
+  SPC n j j org-journal-new-entry
+  SPC n r f org-roam-node-find
+  SPC n r i org-roam-node-insert
+  SPC n r g org-roam-graph
+  SPC r s s elfeed
+  SPC . counsel-find-file
+  SPC g / magit-dispatch
+  SPC g P magit-push
+  SPC g c magit-commit
+  SPC g p magit-pull
+  SPC o t vterm-other-window
+  SPC o e eshell
+  SPC o m mu4e
+  SPC e w w eww
+  SPC e c c ellama-chat
+  SPC e a b ellama-ask-about
+  SPC e s ellama-summarize
+  SPC e c r ellama-code-review
+  SPC e c C ellama-code-complete
+  SPC e c a ellama-code-add
+  SPC e c e ellama-code-edit
+  SPC e w i ellama-improve-wording
+  SPC e g i ellama-improve-grammar
+  SPC p w ivy-pass
+  SPC m P p org-publish
+  SPC s e sudo-edit
+  SPC m m emms
+  SPC f f Format code buffer
+  SPC i c Connect to my IRC server
+  SPC h m Manual
+  SPC h r r Reload Config
+#+end_example
 *** IRC
 In the config, replace the IRC configuration (server and name) with your own.
 *** ellama
