@@ -354,6 +354,7 @@
           tree-style-tab
           firefox-color
           vimium
+          metamask
         ];
         settings = {
           content.notify.interval = 100000;
@@ -943,7 +944,6 @@
         "$mod, E, exec, emacs"
         "$mod, V, exec, Discord"
         "$mod, D, exec, wofi --show run"
-        ", Print, exec, grimblast copy area"
         "$mod, Q, killactive"
         "$mod SHIFT, H, movewindow, l"
         "$mod SHIFT, L, movewindow, r"
