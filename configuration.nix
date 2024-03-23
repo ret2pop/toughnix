@@ -21,6 +21,11 @@
 
   services.xserver.enable = true;
   services.xserver.displayManager.startx.enable = true;
+  services.xserver.desktopManager.runXdgAutostartIfNone = true;
+
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+  services.blueman.enable = true;
 
   services.xserver = {
     layout = "us";
@@ -78,9 +83,11 @@
   xdg.portal = {
     enable = true;
     wlr.enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-kde ];
     config.common.default = "*";
   };
-
   system.stateVersion = "23.11";
+  nixpkgs.config.permittedInsecurePackages = [
+    "nix-2.15.3"
+  ];
 }

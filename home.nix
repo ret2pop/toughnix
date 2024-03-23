@@ -1,59 +1,67 @@
 { config, lib, nixpkgs, pkgs, wallpapers, scripts, ... }:
 {
+
   home.username = "preston";
   home.homeDirectory = "/home/preston";
-  home.packages = [
-    pkgs.vim
-    pkgs.git
-    pkgs.curl
-    pkgs.wget
-    pkgs.pfetch
-    pkgs.cowsay
-    pkgs.ffmpeg
-    pkgs.hyprland
-    pkgs.grim
-    pkgs.acpilight
-    pkgs.light
-    pkgs.gnupg
-    pkgs.pass
-    pkgs.fira-code
-    pkgs.croc
-    pkgs.nixpkgs-fmt
-    pkgs.mu
-    pkgs.rust-analyzer
-    pkgs.cargo
-    pkgs.rnix-lsp
-    pkgs.clang
-    pkgs.bear
-    pkgs.gnumake
-    pkgs.clang-tools
-    pkgs.gammastep
-    pkgs.pinentry
-    pkgs.texliveFull
-    pkgs.helvum
-    pkgs.xdg-utils
-    pkgs.noto-fonts
-    pkgs.noto-fonts-cjk
-    pkgs.autobuild
-    pkgs.rsync
-    pkgs.pavucontrol
-    pkgs.swww
-    pkgs.fswebcam
-    pkgs.nmap
-    pkgs.mpc-cli
-    pkgs.python3
-    pkgs.ghostscript
-    pkgs.hyprpaper
-    pkgs.pipes
-    pkgs.cmatrix
-    (pkgs.nerdfonts.override { fonts = [ "Iosevka" ]; })
-    (pkgs.discord.override {
+  home.packages = with pkgs; [
+    vim
+    git
+    curl
+    wget
+    pfetch
+    cowsay
+    ffmpeg
+    grim
+    acpilight
+    light
+    gnupg
+    (pass.withExtensions (ext: with ext; [ pass-audit pass-otp pass-import pass-genphrase pass-update pass-tomb]))
+    passExtensions.pass-otp
+    fira-code
+    croc
+    mu
+    rust-analyzer
+    cargo
+    clang
+    bear
+    gnumake
+    clang-tools
+    gammastep
+    pinentry
+    texliveFull
+    helvum
+    xdg-utils
+    noto-fonts
+    noto-fonts-cjk
+    autobuild
+    rsync
+    pavucontrol
+    swww
+    fswebcam
+    nmap
+    mpc-cli
+    python3
+    ghostscript
+    hyprpaper
+    pipes
+    cmatrix
+    inkscape
+    rnix-lsp
+    nixfmt
+    podman-desktop
+    monero-gui
+    electrum
+    element-desktop
+    iamb
+    veracrypt
+    imagemagick
+    (nerdfonts.override { fonts = [ "Iosevka" ]; })
+    (discord.override {
       withOpenASAR = true;
       withVencord = true;
     })
-    pkgs.ungoogled-chromium
+    ungoogled-chromium
   ];
-
   fonts.fontconfig.enable = true;
   xsession.enable = true;
   home.stateVersion = "23.11";
@@ -82,6 +90,63 @@
     '';
   };
 
+  services.pantalaimon = {
+    enable = true;
+    settings = {
+      Default = {
+        LogLevel = "Debug";
+        SSL = true;
+      };
+      local-matrix = {
+        Homeserver = "https://social.nullring.xyz";
+        ListenAddress = "0.0.0.0";
+        ListenPort = 8008;
+        SSL = false;
+        UseKeyring = false;
+        IgnoreVerification = true;
+      };
+    };
+  };
+
+  programs.nushell = {
+    enable = true;
+    extraConfig = ''
+      let carapace_completer = {|spans|
+      carapace $spans.0 nushell $spans | from json
+      }
+      $env.config = {
+       show_banner: false,
+       completions: {
+       case_sensitive: false # case-sensitive completions
+       quick: true    # set to false to prevent auto-selecting completions
+       partial: true    # set to false to prevent partial filling of the prompt
+       algorithm: "fuzzy"    # prefix or fuzzy
+       external: {
+       # set to false to prevent nushell looking into $env.PATH to find more suggestions
+           enable: true 
+       # set to lower can improve completion performance at the cost of omitting some options
+           max_results: 100 
+           completer: $carapace_completer # check 'carapace_completer' 
+         }
+       }
+      } 
+      $env.PATH = ($env.PATH | 
+      split row (char esep) |
+      prepend /home/myuser/.apps |
+      append /usr/bin/env
+      )
+    '';
+    shellAliases = {
+      c = "clear";
+      g = "git";
+      v = "vim";
+      h = "Hyprland";
+      r = "gammastep -O 3000";
+      ns = "nix-shell";
+      n = "nix";
+      nf = "nix flake";
+    };
+  };
   programs.mpv = {
     enable = true;
     config = {
@@ -295,7 +360,7 @@
       enable_audio_bell = false;
       font_family = "Iosevka Nerd Font";
       font_size = 14;
-      confirm_os_window_close = -1;
+      confirm_os_window_close = 0;
       background_opacity = "0.9";
       # Catppuccin theme
       foreground = "#cdd6f4";
@@ -345,6 +410,7 @@
       EnableTrackingProtection = true;
       OfferToSaveLogins = false;
     };
+    package = pkgs.firefox-wayland;
     enable = true;
     profiles = {
       default = {
@@ -779,6 +845,11 @@
     '';
     localVariables = {
       EDITOR = "emacsclient -n --alternate-editor=vim";
+      INPUT_METHOD = "fcitx";
+      QT_IM_MODULE = "fcitx";
+      GTK_IM_MODULE = "fcitx";
+      XMODIFIERS = "@im=fcitx";
+      XIM_SERVERS = "fcitx";
     };
     shellAliases = {
       c = "clear";
@@ -841,6 +912,12 @@
       epkgs.chatgpt-shell
       epkgs.ellama
       epkgs.latex-preview-pane
+      epkgs.treemacs
+      epkgs.treesit-auto
+      epkgs.gptel
+      epkgs.elpher
+      epkgs.lyrics-fetcher
+      epkgs.password-store
     ];
   };
 
@@ -883,6 +960,7 @@
       auth           on
       tls            on
       tls_trust_file /etc/ssl/certs/ca-certificates.crt
+      tls_certcheck  off
       logfile        ~/.msmtp.log
 
       # Gmail
@@ -931,7 +1009,10 @@
       exec-once = [
         "waybar"
         "swww init"
-        "swww img ${wallpapers}/bigrobot.png"
+        "swww img ${wallpapers}/imagination.png"
+        "fcitx5-remote -r"
+        "fcitx5 -d --replace"
+        "fcitx5-remote -r"
       ];
       blurls = [
         "waybar"
@@ -940,12 +1021,17 @@
         "workspace 1, ^(.*emacs.*)$"
         "workspace 2, ^(.*firefox.*)$"
         "workspace 3, ^(.*discord.*)$"
+        "workspace 3, ^(.*element-desktop.*)$"
+        "pseudo,fcitx"
       ];
       bind = [
         "$mod, F, exec, firefox"
         "$mod, Return, exec, kitty"
         "$mod, E, exec, emacs"
+        "$mod, B, exec, electrum"
+        "$mod, M, exec, monero-wallet-gui"
         "$mod, V, exec, Discord"
+        "$mod, C, exec, element-desktop"
         "$mod, D, exec, wofi --show run"
         "$mod, P, exec, bash ${scripts}/powermenu.sh"
         "$mod, Q, killactive"
@@ -988,7 +1074,7 @@
         ", XF86AudioLowerVolume, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%-"
         ", XF86AudioNext, exec, mpc next"
         ", XF86AudioPrev, exec, mpc prev"
-        ", XF86MonBrightnessUp , exec, light -A 10" 
+        ", XF86MonBrightnessUp , exec, light -A 10"
         ", XF86MonBrightnessDown, exec, light -U 10"
       ];
       decoration = {
@@ -1013,6 +1099,17 @@
       };
     };
   };
+
+  i18n.inputMethod = {
+    enabled = "fcitx5";
+    fcitx5.addons = with pkgs; [
+      fcitx5-gtk
+      fcitx5-configtool
+      fcitx5-mozc
+      fcitx5-rime
+    ];
+  };
+
   programs.home-manager.enable = true;
 }
 
