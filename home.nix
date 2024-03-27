@@ -51,10 +51,11 @@
     podman-desktop
     monero-gui
     electrum
-    element-desktop
+    fluffychat
     iamb
     veracrypt
     imagemagick
+    tor-browser
     (nerdfonts.override { fonts = [ "Iosevka" ]; })
     (discord.override {
       withOpenASAR = true;
@@ -107,6 +108,7 @@
       };
     };
   };
+
 
   programs.nushell = {
     enable = true;
@@ -850,6 +852,7 @@
       GTK_IM_MODULE = "fcitx";
       XMODIFIERS = "@im=fcitx";
       XIM_SERVERS = "fcitx";
+      WXSUPPRESS_SIZER_FLAGS_CHECK = "1";
     };
     shellAliases = {
       c = "clear";
@@ -966,7 +969,7 @@
       # Gmail
       account        preston
       host           mail.nullring.xyz
-      port           587
+      port           465
       from           preston@nullring.xyz
       user           preston
       passwordeval   "pass Mail"
@@ -1021,7 +1024,10 @@
         "workspace 1, ^(.*emacs.*)$"
         "workspace 2, ^(.*firefox.*)$"
         "workspace 3, ^(.*discord.*)$"
+        "workspace 3, ^(.*fluffychat.*)$"
         "workspace 3, ^(.*element-desktop.*)$"
+        "workspace 5, ^(.*Monero.*)$"
+        "workspace 5, ^(.*electrum.*)$"
         "pseudo,fcitx"
       ];
       bind = [
@@ -1031,7 +1037,8 @@
         "$mod, B, exec, electrum"
         "$mod, M, exec, monero-wallet-gui"
         "$mod, V, exec, Discord"
-        "$mod, C, exec, element-desktop"
+        "$mod, T, exec, veracrypt"
+        "$mod, C, exec, fluffychat"
         "$mod, D, exec, wofi --show run"
         "$mod, P, exec, bash ${scripts}/powermenu.sh"
         "$mod, Q, killactive"

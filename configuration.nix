@@ -42,6 +42,13 @@
   sound.enable = true;
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
+  services.xserver.windowManager.qtile = {
+    enable = true;
+    backend = "wayland";
+    #backend = "x11";
+    extraPackages = python3Packages: with python3Packages; [
+    ];
+  };
   services.pipewire = {
     enable = true;
     alsa.enable = true;
@@ -51,11 +58,14 @@
     #media-session.enable = true;
   };
 
+  services.kanata = {
+    enable = true;
+  };
   # services.xserver.libinput.enable = true;
 
   programs.zsh.enable = true;
 
-   
+
   users.users.root.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINSshvS1N/42pH9Unp3Zj4gjqs9BXoin99oaFWYHXZDJ preston@preston-arch"
   ];

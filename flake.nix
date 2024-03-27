@@ -19,6 +19,33 @@
 
   outputs = { self, nixpkgs, home-manager, nur, disko, wallpapers, sops-nix, scripts, ... }@attrs: {
     nixosConfigurations = {
+      live = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = attrs;
+        modules = [
+          { nixpkgs.overlays = [ nur.overlay ]; }
+          ({ pkgs, ... }:
+            let
+              nur-no-pkgs = import nur {
+                inherit pkgs;
+                nurpkgs = import nixpkgs { system = "x86_64-linux"; };
+              };
+            in
+            {
+              imports = [ ];
+            })
+          (nixpkgs + "/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix")
+          ./configuration.nix
+          disko.nixosModules.disko
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.extraSpecialArgs = attrs;
+            home-manager.useUserPackages = true;
+            home-manager.users.preston = import ./home.nix;
+          }
+        ];
+      };
       continuity = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = attrs;
