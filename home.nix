@@ -56,12 +56,15 @@
     veracrypt
     imagemagick
     tor-browser
+    qsynth
+    poetry
     (nerdfonts.override { fonts = [ "Iosevka" ]; })
     (discord.override {
       withOpenASAR = true;
       withVencord = true;
     })
-    ungoogled-chromium
+    chromium
+    python311Packages.python-lsp-server
   ];
   fonts.fontconfig.enable = true;
   xsession.enable = true;
@@ -1023,6 +1026,7 @@
       windowrule = [
         "workspace 1, ^(.*emacs.*)$"
         "workspace 2, ^(.*firefox.*)$"
+        "workspace 2, ^(.*chromium-browser.*)$"
         "workspace 3, ^(.*discord.*)$"
         "workspace 3, ^(.*fluffychat.*)$"
         "workspace 3, ^(.*element-desktop.*)$"
@@ -1032,6 +1036,7 @@
       ];
       bind = [
         "$mod, F, exec, firefox"
+        "$mod, W, exec, chromium-browser"
         "$mod, Return, exec, kitty"
         "$mod, E, exec, emacs"
         "$mod, B, exec, electrum"
