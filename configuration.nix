@@ -29,9 +29,9 @@
 
   virtualisation.docker.enable = true;
   services.xserver = {
-    layout = "us";
-    xkbVariant = "";
-    xkbOptions = "caps:escape";
+    xkb.layout = "us";
+    xkb.variant = "";
+    xkb.options = "caps:escape";
   };
 
   services.ollama = {
@@ -82,8 +82,6 @@
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-    nixpkgs-fmt
-    rnix-lsp
     curl
     git
     groff

@@ -1,6 +1,6 @@
 { config, lib, nixpkgs, pkgs, wallpapers, scripts, ... }:
 {
-
+  home.enableNixpkgsReleaseCheck = false;
   home.username = "preston";
   home.homeDirectory = "/home/preston";
   home.packages = with pkgs; [
@@ -46,8 +46,7 @@
     pipes
     cmatrix
     inkscape
-    rnix-lsp
-    nixfmt
+    nixfmt-rfc-style
     podman-desktop
     monero-gui
     electrum
@@ -58,12 +57,13 @@
     tor-browser
     qsynth
     poetry
+    vesktop
+    nixd
     (nerdfonts.override { fonts = [ "Iosevka" ]; })
-    (discord.override {
-      withOpenASAR = true;
-      withVencord = true;
-    })
-    chromium
+#    (discord.override {
+#      withOpenASAR = true;
+#      withVencord = true;
+#    })
     python311Packages.python-lsp-server
   ];
   fonts.fontconfig.enable = true;
@@ -112,6 +112,14 @@
     };
   };
 
+  programs.chromium = {
+    enable = true;
+    extensions = [
+      "ddkjiahejlhfcafbddmgiahcphecmpfh" # ublock-origin lite
+      "dbepggeogbaibhgnhhndojpepiihcmeb" # vimium
+      "eimadpbcbfnmbkopoojfekhnkhdbieeh" # dark reader
+    ];
+  };
 
   programs.nushell = {
     enable = true;
@@ -864,6 +872,11 @@
       h = "Hyprland";
       r = "gammastep -O 3000";
     };
+    loginExtra = ''
+if [ "$(tty)" = "/dev/tty1" ];then
+  exec Hyprland
+fi
+    '';
   };
 
   programs.emacs = {
@@ -1014,7 +1027,7 @@
       "$mod" = "SUPER";
       exec-once = [
         "waybar"
-        "swww init"
+        "swww-daemon --format xrgb"
         "swww img ${wallpapers}/imagination.png"
         "fcitx5-remote -r"
         "fcitx5 -d --replace"
@@ -1026,8 +1039,10 @@
       windowrule = [
         "workspace 1, ^(.*emacs.*)$"
         "workspace 2, ^(.*firefox.*)$"
-        "workspace 2, ^(.*chromium-browser.*)$"
+        "workspace 2, ^(.*Chromium-browser.*)$"
+        "workspace 2, ^(.*chromium.*)$"
         "workspace 3, ^(.*discord.*)$"
+        "workspace 3, ^(.*vesktop.*)$"
         "workspace 3, ^(.*fluffychat.*)$"
         "workspace 3, ^(.*element-desktop.*)$"
         "workspace 5, ^(.*Monero.*)$"
@@ -1041,7 +1056,7 @@
         "$mod, E, exec, emacs"
         "$mod, B, exec, electrum"
         "$mod, M, exec, monero-wallet-gui"
-        "$mod, V, exec, Discord"
+        "$mod, V, exec, vesktop"
         "$mod, T, exec, veracrypt"
         "$mod, C, exec, fluffychat"
         "$mod, D, exec, wofi --show run"
@@ -1105,7 +1120,6 @@
         repeat_rate = 50;
       };
       misc = {
-        force_hypr_chan = false;
         force_default_wallpaper = 0;
         disable_hyprland_logo = true;
       };
