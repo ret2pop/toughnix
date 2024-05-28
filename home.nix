@@ -84,7 +84,9 @@
     temperature.day = 5000;
     temperature.night = 3000;
     settings = {
-      adjustment-method = "wayland";
+      general = {
+        adjustment-method = "wayland";
+      };
     };
   };
   services.mpd = {
