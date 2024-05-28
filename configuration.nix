@@ -85,6 +85,7 @@
     curl
     git
     groff
+    nixd
   ];
 
   programs.light.enable = true;

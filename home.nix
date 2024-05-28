@@ -26,7 +26,6 @@
     bear
     gnumake
     clang-tools
-    gammastep
     pinentry
     texliveFull
     helvum
@@ -79,6 +78,15 @@
     '';
   };
 
+  services.gammastep = {
+    enable = true;
+    provider = "geoclue2";
+    temperature.day = 5000;
+    temperature.night = 3000;
+    settings = {
+      adjustment-method = "wayland";
+    };
+  };
   services.mpd = {
     enable = true;
     dbFile = "/home/preston/.config/mpd/db";
