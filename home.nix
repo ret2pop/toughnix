@@ -80,7 +80,9 @@
 
   services.gammastep = {
     enable = true;
-    provider = "geoclue2";
+    provider = "manual";
+    latitude = 49.282730;
+    longitude = -123.120735;
     temperature.day = 5000;
     temperature.night = 3000;
     settings = {
@@ -879,8 +881,7 @@
       c = "clear";
       g = "git";
       v = "vim";
-      h = "Hyprland";
-      r = "gammastep -O 3000";
+      py = "python3";
     };
     loginExtra = ''
 if [ "$(tty)" = "/dev/tty1" ];then
