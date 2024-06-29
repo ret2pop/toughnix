@@ -12,7 +12,6 @@
     cowsay
     ffmpeg
     grim
-    acpilight
     light
     gnupg
     (pass.withExtensions (ext: with ext; [ pass-audit pass-otp pass-import pass-genphrase pass-update pass-tomb]))
@@ -37,33 +36,32 @@
     pavucontrol
     swww
     fswebcam
-    nmap
     mpc-cli
     python3
     ghostscript
-    hyprpaper
     pipes
     cmatrix
     inkscape
     nixfmt-rfc-style
     podman-desktop
-    monero-gui
+    #monero-gui
     electrum
     fluffychat
     iamb
-    veracrypt
+    #veracrypt
     imagemagick
     tor-browser
     qsynth
     poetry
     vesktop
     nixd
+    graphviz
+    vscode-langservers-extracted
+    alsa-scarlett-gui
+    (aspellWithDicts
+      (dicts: with dicts; [ en en-computers en-science ]))
     (nerdfonts.override { fonts = [ "Iosevka" ]; })
-#    (discord.override {
-#      withOpenASAR = true;
-#      withVencord = true;
-#    })
-    python311Packages.python-lsp-server
+    nodePackages.pyright
   ];
   fonts.fontconfig.enable = true;
   xsession.enable = true;
@@ -125,11 +123,14 @@
   };
 
   programs.chromium = {
+    package = pkgs.chromium;
     enable = true;
     extensions = [
       "ddkjiahejlhfcafbddmgiahcphecmpfh" # ublock-origin lite
       "dbepggeogbaibhgnhhndojpepiihcmeb" # vimium
       "eimadpbcbfnmbkopoojfekhnkhdbieeh" # dark reader
+      "oicakdoenlelpjnkoljnaakdofplkgnd" # tree style tabs
+      "nkbihfbeogaeaoehlefnkodbefgpgknn" # metamask
     ];
   };
 
@@ -869,7 +870,7 @@
       source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
     '';
     localVariables = {
-      EDITOR = "emacsclient -n --alternate-editor=vim";
+      EDITOR = "emacsclient --create-frame --alternate-editor=vim";
       INPUT_METHOD = "fcitx";
       QT_IM_MODULE = "fcitx";
       GTK_IM_MODULE = "fcitx";
@@ -925,6 +926,7 @@ fi
       epkgs.counsel
       epkgs.mu4e
       epkgs.yasnippet
+      epkgs.yasnippet-snippets
       epkgs.company
       epkgs.pinentry
       epkgs.pdf-tools
@@ -943,11 +945,21 @@ fi
       epkgs.ellama
       epkgs.latex-preview-pane
       epkgs.treemacs
+      epkgs.treemacs-projectile
+      epkgs.treemacs-evil
+      epkgs.treemacs-magit
       epkgs.treesit-auto
       epkgs.gptel
       epkgs.elpher
       epkgs.lyrics-fetcher
       epkgs.password-store
+      epkgs.org-roam-ui
+      epkgs.websocket
+      epkgs.simple-httpd
+      epkgs.f
+      epkgs.org-fragtog
+      epkgs.enwc
+      epkgs.writegood-mode
     ];
   };
 
@@ -955,8 +967,8 @@ fi
     enable = true;
     extraConfig = ''
       IMAPAccount prestonpan
-      Host mail.nullring.xyz
-      User preston
+      Host imap.gmail.com
+      User ret2pop@gmail.com
       PassCmd "pass Mail"
       Port 993
       SSLType IMAPS
@@ -967,8 +979,8 @@ fi
       Account prestonpan
 
       MaildirStore prestonpan-local
-      Path ~/email/mbsyncmail/
-      Inbox ~/email/mbsyncmail/INBOX
+      Path ~/email/ret2pop/
+      Inbox ~/email/ret2pop/INBOX
       SubFolders Verbatim
 
       Channel prestonpan
@@ -995,10 +1007,10 @@ fi
 
       # Gmail
       account        preston
-      host           mail.nullring.xyz
-      port           465
-      from           preston@nullring.xyz
-      user           preston
+      host           smtp.gmail.com
+      port           587
+      from           ret2pop@gmail.com
+      user           ret2pop@gmail.com
       passwordeval   "pass Mail"
 
 
@@ -1043,6 +1055,8 @@ fi
         "fcitx5-remote -r"
         "fcitx5 -d --replace"
         "fcitx5-remote -r"
+        "emacs"
+        "chromium"
       ];
       blurls = [
         "waybar"
@@ -1129,6 +1143,12 @@ fi
         kb_options = "caps:swapescape";
         repeat_delay = 300;
         repeat_rate = 50;
+        natural_scroll = true;
+        touchpad = {
+          natural_scroll = true;
+          disable_while_typing = true;
+          tap-to-click = true;
+        };
       };
       misc = {
         force_default_wallpaper = 0;
