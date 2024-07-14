@@ -1,5 +1,6 @@
-{ config, lib, nixpkgs, pkgs, wallpapers, scripts, ... }:
+{ pkgs, wallpapers, scripts, ... }:
 {
+  nixpkgs.config.cudaSupport = true;
   home.enableNixpkgsReleaseCheck = false;
   home.username = "preston";
   home.homeDirectory = "/home/preston";
@@ -14,7 +15,7 @@
     grim
     light
     gnupg
-    (pass.withExtensions (ext: with ext; [ pass-audit pass-otp pass-import pass-genphrase pass-update pass-tomb]))
+    (pass.withExtensions (ext: with ext; [ pass-otp pass-import pass-genphrase pass-update pass-tomb]))
     passExtensions.pass-otp
     fira-code
     croc
@@ -44,11 +45,10 @@
     inkscape
     nixfmt-rfc-style
     podman-desktop
-    #monero-gui
-    electrum
+    monero-gui
+    # electrum
     fluffychat
-    iamb
-    #veracrypt
+    veracrypt
     imagemagick
     tor-browser
     qsynth
@@ -58,10 +58,19 @@
     graphviz
     vscode-langservers-extracted
     alsa-scarlett-gui
+    openscad
+    blender
+    krita
+    kdenlive
+    # telegram-desktop
+    # kicad
+    obs-studio
+    obs-cli
+    python312Packages.jedi
+    octaveFull
     (aspellWithDicts
       (dicts: with dicts; [ en en-computers en-science ]))
     (nerdfonts.override { fonts = [ "Iosevka" ]; })
-    nodePackages.pyright
   ];
   fonts.fontconfig.enable = true;
   xsession.enable = true;
@@ -73,6 +82,7 @@
     extraConfig = ''
       allow-emacs-pinentry
       allow-loopback-pinentry
+
     '';
   };
 
@@ -96,10 +106,22 @@
     network.port = 6600;
     musicDirectory = "/home/preston/music";
     playlistDirectory = "/home/preston/.config/mpd/playlists";
+    network.listenAddress = "0.0.0.0";
     extraConfig = ''
       audio_output {
         type "pipewire"
         name "pipewire output"
+      }
+      audio_output {
+	      type		"httpd"
+      	name		"My HTTP Stream"
+      	encoder		"opus"		# optional
+      	port		"8000"
+     #	quality		"5.0"			# do not define if bitrate is defined
+       	bitrate		"128000"			# do not define if quality is defined
+      	format		"48000:16:1"
+      	always_on       "yes"			# prevent MPD from disconnecting all listeners when playback is stopped.
+       	tags            "yes"			# httpd supports sending tags to listening streams.
       }
     '';
   };
@@ -170,7 +192,8 @@
       r = "gammastep -O 3000";
       ns = "nix-shell";
       n = "nix";
-      nf = "nix flake";
+      nfu = "cd /etc/nixos/ && sudo nix flake update";
+      rb = "sudo nixos-rebuild switch";
     };
   };
   programs.mpv = {
@@ -841,21 +864,17 @@
       mainBar = {
         layer = "top";
         position = "top";
-        height = 30;
+        height = 50;
 
         output = [
-          "LVDS-1"
+          "HDMI-A-1"
+          "DP-2"
+          "DP-3"
         ];
 
         modules-left = [ "hyprland/workspaces" ];
         modules-center = [ "hyprland/window" ];
         modules-right = [ "battery" "clock" ];
-
-        battery = {
-          bat = "BAT0";
-          format = "{capacity}% {icon}";
-          format-icons = [ "" "" "" "" "" ];
-        };
 
         clock = {
           format = "{:%a %d, %b %H:%M}";
@@ -867,7 +886,11 @@
   programs.zsh = {
     enable = true;
     initExtra = ''
-      source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+    export CUDA_PATH=${pkgs.cudatoolkit}
+    # export LD_LIBRARY_PATH=${pkgs.linuxPackages.nvidia_x11}/lib
+    export EXTRA_LDFLAGS="-L/lib -L${pkgs.linuxPackages.nvidia_x11}/lib"
+    export EXTRA_CCFLAGS="-I/usr/include"
+    source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
     '';
     localVariables = {
       EDITOR = "emacsclient --create-frame --alternate-editor=vim";
@@ -883,6 +906,8 @@
       g = "git";
       v = "vim";
       py = "python3";
+      rb = "sudo nixos-rebuild switch";
+      nfu = "cd /etc/nixos/ && sudo nix flake update";
     };
     loginExtra = ''
 if [ "$(tty)" = "/dev/tty1" ];then
@@ -1046,6 +1071,12 @@ fi
     package = pkgs.hyprland;
     xwayland.enable = true;
     systemd.enable = true;
+#     extraConfig = ''
+#       device = {
+#         name = beken-usb-gaming-mouse-1
+#         sensitivity = 0.5
+#       };
+# '';
     settings = {
       "$mod" = "SUPER";
       exec-once = [
@@ -1056,10 +1087,20 @@ fi
         "fcitx5 -d --replace"
         "fcitx5-remote -r"
         "emacs"
-        "chromium"
+        "firefox"
+      ];
+      env = [
+        "LIBVA_DRIVER_NAME,nvidia"
+        "XDG_SESSION_TYPE,wayland"
+        "GBM_BACKEND,nvidia-drm"
+        "__GLX_VENDOR_LIBRARY_NAME,nvidia"
+        "ELECTRON_OZONE_PLATFORM_HINT,auto"
       ];
       blurls = [
         "waybar"
+      ];
+      monitor = [
+        "Unknown-1,disable"
       ];
       windowrule = [
         "workspace 1, ^(.*emacs.*)$"
@@ -1076,13 +1117,13 @@ fi
       ];
       bind = [
         "$mod, F, exec, firefox"
-        "$mod, W, exec, chromium-browser"
+        "$mod, W, exec, chromium-browser --enable-features=UseOzonePlatform --ozone-platform=wayland"
         "$mod, Return, exec, kitty"
         "$mod, E, exec, emacs"
         "$mod, B, exec, electrum"
+        "$mod, T, exec, telegram-desktop"
         "$mod, M, exec, monero-wallet-gui"
         "$mod, V, exec, vesktop"
-        "$mod, T, exec, veracrypt"
         "$mod, C, exec, fluffychat"
         "$mod, D, exec, wofi --show run"
         "$mod, P, exec, bash ${scripts}/powermenu.sh"
@@ -1149,6 +1190,9 @@ fi
           disable_while_typing = true;
           tap-to-click = true;
         };
+      };
+      cursor = {
+        no_hardware_cursors = true;
       };
       misc = {
         force_default_wallpaper = 0;

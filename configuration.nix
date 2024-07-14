@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 
 {
+  nixpkgs.config.cudaSupport = true;
   imports =
     [
       ./hardware-configuration.nix
@@ -11,9 +12,10 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "continuity";
-  # networking.wireless.enable = true;
-
   networking.networkmanager.enable = true;
+  networking.firewall = {
+    allowedTCPPorts = [ 80 443 6600 8000 11434 7777 ];
+  };
 
   time.timeZone = "America/Vancouver";
 
@@ -25,17 +27,36 @@
 
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      vaapiVdpau
+      libvdpau-va-gl
+      nvidia-vaapi-driver
+    ];
+  };
   services.blueman.enable = true;
 
   virtualisation.docker.enable = true;
   services.xserver = {
+    videoDrivers = [ "nvidia" ];
     xkb.layout = "us";
     xkb.variant = "";
     xkb.options = "caps:escape";
   };
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = true;
+    powerManagement.finegrained = false;
+    nvidiaSettings = true;
+    open = false;
+  };
+  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
 
   services.ollama = {
     enable = true;
+    acceleration = "cuda";
+    host = "0.0.0.0";
   };
 
   services.printing.enable = true;
@@ -43,13 +64,6 @@
   sound.enable = true;
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
-  services.xserver.windowManager.qtile = {
-    enable = true;
-    backend = "wayland";
-    #backend = "x11";
-    extraPackages = python3Packages: with python3Packages; [
-    ];
-  };
   services.pipewire = {
     enable = true;
     alsa.enable = true;
@@ -58,6 +72,7 @@
     jack.enable = true;
     #media-session.enable = true;
   };
+  services.udisks2.enable = true;
 
   services.kanata = {
     enable = true;
@@ -86,6 +101,11 @@
     git
     groff
     nixd
+    cudatoolkit
+    restic
+    cudaPackages.cudnn
+    cudaPackages.libcublas
+    linuxPackages.nvidia_x11
   ];
 
   programs.light.enable = true;
@@ -93,7 +113,7 @@
   xdg.portal = {
     enable = true;
     wlr.enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-kde ];
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal pkgs.xdg-desktop-portal-hyprland ];
     config.common.default = "*";
   };
 
@@ -107,41 +127,25 @@
     pkgs.platformio-core.udev
     pkgs.openocd
   ];
-
-  # security.apparmor.enable =  true;
-  # security.apparmor.policies = pkgs.apparmor-profiles;
-  # security.apparmor.killUnconfinedConfinables = true;
-#  boot.kernelParams = [
-    # Slab/slub sanity checks, redzoning, and poisoning
-#    "slub_debug=FZP"
-
-    # Overwrite free'd memory
-#    "page_poison=1"
-
-    # Enable page allocator randomization
-#    "page_alloc.shuffle=1"
-#  ];
-
-  # Disable bpf() JIT (to eliminate spray attacks)
-#  boot.kernel.sysctl."net.core.bpf_jit_enable" =  false;
-
-  # Disable ftrace debugging
-#  boot.kernel.sysctl."kernel.ftrace_enabled" =  false;
-
-  # boot.kernel.sysctl."net.ipv4.conf.all.log_martians" =  true;
-  # boot.kernel.sysctl."net.ipv4.conf.all.rp_filter" =  "1";
-  # boot.kernel.sysctl."net.ipv4.conf.default.log_martians" =  true;
-  # boot.kernel.sysctl."net.ipv4.conf.default.rp_filter" =  "1";
-
-  # boot.kernel.sysctl."net.ipv4.icmp_echo_ignore_broadcasts" =  true;
-
-  # boot.kernel.sysctl."net.ipv4.conf.all.accept_redirects" =  false;
-  # boot.kernel.sysctl."net.ipv4.conf.all.secure_redirects" =  false;
-  # boot.kernel.sysctl."net.ipv4.conf.default.accept_redirects" =  false;
-  # boot.kernel.sysctl."net.ipv4.conf.default.secure_redirects" =  false;
-  # boot.kernel.sysctl."net.ipv6.conf.all.accept_redirects" =  false;
-  # boot.kernel.sysctl."net.ipv6.conf.default.accept_redirects" =  false;
-
-  # boot.kernel.sysctl."net.ipv4.conf.all.send_redirects" = false;
-  # boot.kernel.sysctl."net.ipv4.conf.default.send_redirects" = false;
+  services.calibre-server = {
+    enable = true;
+    host = "0.0.0.0";
+    port = 7777;
+    user = "preston";
+    group = "preston";
+  };
+  services.calibre-web = {
+    enable = true;
+    user = "preston";
+    group = "preston";
+    listen.port = 7777;
+    listen.ip = "0.0.0.0";
+    openFirewall = true;
+    options = {
+      enableBookUploading = true;
+      enableKepubify = true;
+      enableBookConversion = true;
+      calibreLibrary = "/home/preston/books/";
+    };
+  };
 }
