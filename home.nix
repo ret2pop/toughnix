@@ -6,9 +6,6 @@
     homeDirectory = "/home/preston";
     stateVersion = "23.11";
     packages = with pkgs; [
-      # kicad
-      # telegram-desktop
-      (pass.withExtensions (ext: with ext; [ pass-otp pass-import pass-genphrase pass-update pass-tomb]))
       alsa-scarlett-gui
       autobuild
       bear
@@ -35,6 +32,7 @@
       imagemagick
       inkscape
       kdenlive
+      kicad
       krita
       light
       monero-gui
@@ -62,6 +60,7 @@
       rsync
       rust-analyzer
       swww
+      telegram-desktop
       texliveFull
       timeshift
       tor-browser
@@ -75,6 +74,7 @@
       (aspellWithDicts
         (dicts: with dicts; [ en en-computers en-science ]))
       (nerdfonts.override { fonts = [ "Iosevka" ]; })
+      (pass.withExtensions (ext: with ext; [ pass-otp pass-import pass-genphrase pass-update pass-tomb]))
     ];
   };
 
@@ -93,9 +93,10 @@
       provider = "manual";
       latitude = 49.282730;
       longitude = -123.120735;
+     
       temperature = {
-        day = 5000;
-        night = 3000;
+      day = 5000;
+      night = 3000;
       };
       settings = {
         general = {

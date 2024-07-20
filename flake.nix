@@ -16,9 +16,9 @@
     };
 
     nur.url = "github:nix-community/NUR";
-    wallpapers.url = "github:ret2pop/wallpapers";
     sops-nix.url = "github:Mic92/sops-nix";
     scripts.url = "github:ret2pop/scripts";
+    wallpapers.url = "github:ret2pop/wallpapers";
   };
 
   outputs = { nixpkgs, home-manager, nur, disko, ... }@attrs: {
