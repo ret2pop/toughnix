@@ -1,113 +1,118 @@
 { pkgs, wallpapers, scripts, ... }:
 {
-  nixpkgs.config.cudaSupport = true;
-  home.enableNixpkgsReleaseCheck = false;
-  home.username = "preston";
-  home.homeDirectory = "/home/preston";
-  home.packages = with pkgs; [
-    vim
-    git
-    curl
-    wget
-    pfetch
-    cowsay
-    ffmpeg
-    grim
-    light
-    gnupg
-    (pass.withExtensions (ext: with ext; [ pass-otp pass-import pass-genphrase pass-update pass-tomb]))
-    passExtensions.pass-otp
-    fira-code
-    croc
-    mu
-    rust-analyzer
-    cargo
-    clang
-    bear
-    gnumake
-    clang-tools
-    pinentry
-    texliveFull
-    helvum
-    xdg-utils
-    noto-fonts
-    noto-fonts-cjk
-    autobuild
-    rsync
-    pavucontrol
-    swww
-    fswebcam
-    mpc-cli
-    python3
-    ghostscript
-    pipes
-    cmatrix
-    inkscape
-    nixfmt-rfc-style
-    podman-desktop
-    monero-gui
-    # electrum
-    fluffychat
-    veracrypt
-    imagemagick
-    tor-browser
-    qsynth
-    poetry
-    vesktop
-    nixd
-    graphviz
-    vscode-langservers-extracted
-    alsa-scarlett-gui
-    openscad
-    blender
-    krita
-    kdenlive
-    # telegram-desktop
-    # kicad
-    obs-studio
-    obs-cli
-    python312Packages.jedi
-    octaveFull
-    (aspellWithDicts
-      (dicts: with dicts; [ en en-computers en-science ]))
-    (nerdfonts.override { fonts = [ "Iosevka" ]; })
-  ];
-  fonts.fontconfig.enable = true;
-  xsession.enable = true;
-  home.stateVersion = "23.11";
+  home = {
+    enableNixpkgsReleaseCheck = false;
+    username = "preston";
+    homeDirectory = "/home/preston";
+    stateVersion = "23.11";
+    packages = with pkgs; [
+      # kicad
+      # telegram-desktop
+      (pass.withExtensions (ext: with ext; [ pass-otp pass-import pass-genphrase pass-update pass-tomb]))
+      alsa-scarlett-gui
+      autobuild
+      bear
+      blender
+      cargo
+      clang
+      clang-tools
+      cmatrix
+      cowsay
+      croc
+      curl
+      electrum
+      ffmpeg
+      fira-code
+      fluffychat
+      fswebcam
+      ghostscript
+      git
+      gnumake
+      gnupg
+      graphviz
+      grim
+      helvum
+      imagemagick
+      inkscape
+      kdenlive
+      krita
+      light
+      monero-gui
+      mpc-cli
+      mu
+      nixd
+      nixfmt-rfc-style
+      noto-fonts
+      noto-fonts-cjk
+      obs-cli
+      obs-studio
+      octaveFull
+      openscad
+      openscad-lsp
+      passExtensions.pass-otp
+      pavucontrol
+      pfetch
+      pinentry
+      pipes
+      podman-desktop
+      poetry
+      python3
+      python312Packages.jedi
+      qsynth
+      rsync
+      rust-analyzer
+      swww
+      texliveFull
+      timeshift
+      tor-browser
+      veracrypt
+      vesktop
+      vim
+      vscode-langservers-extracted
+      wget
+      x11_ssh_askpass
+      xdg-utils
+      (aspellWithDicts
+        (dicts: with dicts; [ en en-computers en-science ]))
+      (nerdfonts.override { fonts = [ "Iosevka" ]; })
+    ];
+  };
 
-  services.gpg-agent = {
-    enable = true;
-    pinentryFlavor = "emacs";
-    extraConfig = ''
+  services = {
+    gpg-agent = {
+      enable = true;
+      pinentryFlavor = "emacs";
+      extraConfig = ''
       allow-emacs-pinentry
       allow-loopback-pinentry
-
     '';
-  };
+    };
 
-  services.gammastep = {
-    enable = true;
-    provider = "manual";
-    latitude = 49.282730;
-    longitude = -123.120735;
-    temperature.day = 5000;
-    temperature.night = 3000;
-    settings = {
-      general = {
-        adjustment-method = "wayland";
+    gammastep = {
+      enable = true;
+      provider = "manual";
+      latitude = 49.282730;
+      longitude = -123.120735;
+      temperature = {
+        day = 5000;
+        night = 3000;
+      };
+      settings = {
+        general = {
+          adjustment-method = "wayland";
+        };
       };
     };
-  };
-  services.mpd = {
-    enable = true;
-    dbFile = "/home/preston/.config/mpd/db";
-    dataDir = "/home/preston/.config/mpd/";
-    network.port = 6600;
-    musicDirectory = "/home/preston/music";
-    playlistDirectory = "/home/preston/.config/mpd/playlists";
-    network.listenAddress = "0.0.0.0";
-    extraConfig = ''
+
+    mpd = {
+      enable = true;
+      dbFile = "/home/preston/.config/mpd/db";
+      dataDir = "/home/preston/.config/mpd/";
+      network.port = 6600;
+      musicDirectory = "/home/preston/music";
+      playlistDirectory = "/home/preston/.config/mpd/playlists";
+      network.listenAddress = "0.0.0.0";
+      extraConfig = ''
       audio_output {
         type "pipewire"
         name "pipewire output"
@@ -124,44 +129,46 @@
        	tags            "yes"			# httpd supports sending tags to listening streams.
       }
     '';
-  };
+    };
 
-  services.pantalaimon = {
-    enable = true;
-    settings = {
-      Default = {
-        LogLevel = "Debug";
-        SSL = true;
-      };
-      local-matrix = {
-        Homeserver = "https://social.nullring.xyz";
-        ListenAddress = "0.0.0.0";
-        ListenPort = 8008;
-        SSL = false;
-        UseKeyring = false;
-        IgnoreVerification = true;
+    pantalaimon = {
+      enable = true;
+      settings = {
+        Default = {
+          LogLevel = "Debug";
+          SSL = true;
+        };
+        local-matrix = {
+          Homeserver = "https://social.nullring.xyz";
+          ListenAddress = "0.0.0.0";
+          ListenPort = 8008;
+          SSL = false;
+          UseKeyring = false;
+          IgnoreVerification = true;
+        };
       };
     };
   };
 
-  programs.chromium = {
-    package = pkgs.chromium;
-    enable = true;
-    extensions = [
-      "ddkjiahejlhfcafbddmgiahcphecmpfh" # ublock-origin lite
-      "dbepggeogbaibhgnhhndojpepiihcmeb" # vimium
-      "eimadpbcbfnmbkopoojfekhnkhdbieeh" # dark reader
-      "oicakdoenlelpjnkoljnaakdofplkgnd" # tree style tabs
-      "nkbihfbeogaeaoehlefnkodbefgpgknn" # metamask
-    ];
-  };
+  programs = {
+    chromium = {
+      package = pkgs.chromium;
+      enable = true;
+      extensions = [
+        "ddkjiahejlhfcafbddmgiahcphecmpfh" # ublock-origin lite
+        "dbepggeogbaibhgnhhndojpepiihcmeb" # vimium
+        "eimadpbcbfnmbkopoojfekhnkhdbieeh" # dark reader
+        "oicakdoenlelpjnkoljnaakdofplkgnd" # tree style tabs
+        "nkbihfbeogaeaoehlefnkodbefgpgknn" # metamask
+      ];
+    };
 
-  programs.nushell = {
-    enable = true;
-    extraConfig = ''
+    nushell = {
+      enable = true;
+      extraConfig = ''
       let carapace_completer = {|spans|
       carapace $spans.0 nushell $spans | from json
-      }
+                               }
       $env.config = {
        show_banner: false,
        completions: {
@@ -175,67 +182,69 @@
        # set to lower can improve completion performance at the cost of omitting some options
            max_results: 100 
            completer: $carapace_completer # check 'carapace_completer' 
-         }
        }
-      } 
+       }
+                               } 
       $env.PATH = ($env.PATH | 
       split row (char esep) |
       prepend /home/myuser/.apps |
       append /usr/bin/env
-      )
+                    )
     '';
-    shellAliases = {
-      c = "clear";
-      g = "git";
-      v = "vim";
-      h = "Hyprland";
-      r = "gammastep -O 3000";
-      ns = "nix-shell";
-      n = "nix";
-      nfu = "cd /etc/nixos/ && sudo nix flake update";
-      rb = "sudo nixos-rebuild switch";
-    };
-  };
-  programs.mpv = {
-    enable = true;
-    config = {
-      profile = "gpu-hq";
-      force-window = true;
-      ytdl-format = "bestvideo+bestaudio";
-      cache-default = 4000000;
-    };
-  };
 
-  programs.yt-dlp = {
-    enable = true;
-    settings = {
-      embed-thumbnail = true;
-      embed-subs = true;
-      sub-langs = "all";
-      downloader = "aria2c";
-      downloader-args = "aria2c:'-c -x8 -s8 -k1M'";
-    };
-  };
-
-  programs.wofi = {
-    enable = true;
-    settings = {
-      location = "bottom-right";
-      allow_markup = true;
-      show = "drun";
-      width = 750;
-      height = 400;
-      always_parse_args = true;
-      show_all = false;
-      term = "kitty";
-      hide_scroll = true;
-      print_command = true;
-      insensitive = true;
-      prompt = "Run what, Commander?";
-      columns = 2;
+      shellAliases = {
+        c = "clear";
+        g = "git";
+        v = "vim";
+        h = "Hyprland";
+        r = "gammastep -O 3000";
+        ns = "nix-shell";
+        n = "nix";
+        nfu = "cd /etc/nixos/ && sudo nix flake update";
+        rb = "sudo nixos-rebuild switch";
+      };
     };
 
-    style = ''
+    mpv = {
+      enable = true;
+      config = {
+        profile = "gpu-hq";
+        force-window = true;
+        ytdl-format = "bestvideo+bestaudio";
+        cache-default = 4000000;
+      };
+    };
+
+    yt-dlp = {
+      enable = true;
+      settings = {
+        embed-thumbnail = true;
+        embed-subs = true;
+        sub-langs = "all";
+        downloader = "aria2c";
+        downloader-args = "aria2c:'-c -x8 -s8 -k1M'";
+      };
+    };
+
+    wofi = {
+      enable = true;
+      settings = {
+        location = "bottom-right";
+        allow_markup = true;
+        show = "drun";
+        width = 750;
+        height = 400;
+        always_parse_args = true;
+        show_all = false;
+        term = "kitty";
+        hide_scroll = true;
+        print_command = true;
+        insensitive = true;
+        prompt = "Run what, Commander?";
+        columns = 2;
+      };
+
+      style = ''
       @define-color	rosewater  #f5e0dc;
       @define-color	rosewater-rgb  rgb(245, 224, 220);
       @define-color	flamingo  #f2cdcd;
@@ -401,219 +410,322 @@
         background-color: @lavender!important;
       }
     '';
-  };
-
-  programs.kitty = {
-    enable = true;
-    settings = {
-      enable_audio_bell = false;
-      font_family = "Iosevka Nerd Font";
-      font_size = 14;
-      confirm_os_window_close = 0;
-      background_opacity = "0.9";
-      # Catppuccin theme
-      foreground = "#cdd6f4";
-      background = "#1e1e2e";
-      selection_foreground = "#1e1e2e";
-      selection_background = "#f5e0dc";
-      cursor = "#f5e0dc";
-      cursor_text_color = "#1e1e2e";
-      url_color = "#f5e0dc";
-      active_border_color = "#B4BEFE";
-      inactive_border_color = "#6C7086";
-      bell_border_color = "#F9E2AF";
-      wayland_titlebar_color = "#1E1E2E";
-      macos_titlebar_color = "#1E1E2E";
-      active_tab_foreground = "#11111B";
-      active_tab_background = "#CBA6F7";
-      inactive_tab_foreground = "#CDD6F4";
-      inactive_tab_background = "#181825";
-      tab_bar_background = "#11111B";
-      mark1_foreground = "#1E1E2E";
-      mark1_background = "#B4BEFE";
-      mark2_foreground = "#1E1E2E";
-      mark2_background = "#CBA6F7";
-      mark3_foreground = "#1E1E2E";
-      mark3_background = "#74C7EC";
-      color0 = "#45475A";
-      color8 = "#585B70";
-      color1 = "#F38BA8";
-      color9 = "#F38BA8";
-      color2 = "#A6E3A1";
-      color10 = "#A6E3A1";
-      color3 = "#F9E2AF";
-      color11 = "#F9E2AF";
-      color4 = "#89B4FA";
-      color12 = "#89B4FA";
-      color5 = "#F5C2E7";
-      color13 = "#F5C2E7";
-      color6 = "#94E2D5";
-      color14 = "#94E2D5";
-      color7 = "#BAC2DE";
-      color15 = "#A6ADC8";
     };
-  };
 
-  programs.firefox = {
-    policies = {
-      EnableTrackingProtection = true;
-      OfferToSaveLogins = false;
+    kitty = {
+      enable = true;
+      settings = {
+        enable_audio_bell = false;
+        font_family = "Iosevka Nerd Font";
+        font_size = 14;
+        confirm_os_window_close = 0;
+        background_opacity = "0.9";
+        # Catppuccin theme
+        foreground = "#cdd6f4";
+        background = "#1e1e2e";
+        selection_foreground = "#1e1e2e";
+        selection_background = "#f5e0dc";
+        cursor = "#f5e0dc";
+        cursor_text_color = "#1e1e2e";
+        url_color = "#f5e0dc";
+        active_border_color = "#B4BEFE";
+        inactive_border_color = "#6C7086";
+        bell_border_color = "#F9E2AF";
+        wayland_titlebar_color = "#1E1E2E";
+        macos_titlebar_color = "#1E1E2E";
+        active_tab_foreground = "#11111B";
+        active_tab_background = "#CBA6F7";
+        inactive_tab_foreground = "#CDD6F4";
+        inactive_tab_background = "#181825";
+        tab_bar_background = "#11111B";
+        mark1_foreground = "#1E1E2E";
+        mark1_background = "#B4BEFE";
+        mark2_foreground = "#1E1E2E";
+        mark2_background = "#CBA6F7";
+        mark3_foreground = "#1E1E2E";
+        mark3_background = "#74C7EC";
+        color0 = "#45475A";
+        color8 = "#585B70";
+        color1 = "#F38BA8";
+        color9 = "#F38BA8";
+        color2 = "#A6E3A1";
+        color10 = "#A6E3A1";
+        color3 = "#F9E2AF";
+        color11 = "#F9E2AF";
+        color4 = "#89B4FA";
+        color12 = "#89B4FA";
+        color5 = "#F5C2E7";
+        color13 = "#F5C2E7";
+        color6 = "#94E2D5";
+        color14 = "#94E2D5";
+        color7 = "#BAC2DE";
+        color15 = "#A6ADC8";
+      };
     };
-    package = pkgs.firefox-wayland;
-    enable = true;
-    profiles = {
-      default = {
-        id = 0;
-        name = "default";
-        isDefault = true;
-        extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-          ublock-origin
-          tree-style-tab
-          firefox-color
-          vimium
-          metamask
-        ];
-        settings = {
-          content.notify.interval = 100000;
-          gfx.canvas.accelerated.cache-items = 4096;
-          gfx.canvas.accelerated.cache-size = 512;
-          gfx.content.skia-font-cache-size = 20;
-          browser.cache.jsbc_compression_level = 3;
-          media.memory_cache_max_size = 65536;
-          media.cache_readahead_limit = 7200;
-          media.cache_resume_threshold = 3600;
-          image.mem.decode_bytes_at_a_time = 32768;
-          network.buffer.cache.size = 262144;
-          network.buffer.cache.count = 128;
-          network.http.max-connections = 1800;
-          network.http.max-persistent-connections-per-server = 10;
-          network.http.max-urgent-start-excessive-connections-per-host = 5;
-          network.http.pacing.requests.enabled = false;
-          network.dnsCacheExpiration = 3600;
-          network.dns.max_high_priority_threads = 8;
-          network.ssl_tokens_cache_capacity = 10240;
-          network.dns.disablePrefetch = true;
-          network.prefetch-next = false;
-          network.predictor.enabled = false;
-          layout.css.grid-template-masonry-value.enabled = true;
-          dom.enable_web_task_scheduling = true;
-          layout.css.has-selector.enabled = true;
-          dom.security.sanitizer.enabled = true;
-          browser.contentblocking.category = "strict";
-          urlclassifier.trackingSkipURLs = "*.reddit.com, *.twitter.com, *.twimg.com, *.tiktok.com";
-          urlclassifier.features.socialtracking.skipURLs = "*.instagram.com, *.twitter.com, *.twimg.com";
-          network.cookie.sameSite.noneRequiresSecure = true;
-          browser.download.start_downloads_in_tmp_dir = true;
-          browser.helperApps.deleteTempFileOnExit = true;
-          browser.uitour.enabled = false;
-          privacy.globalprivacycontrol.enabled = true;
-          security.OCSP.enabled = 0;
-          security.remote_settings.crlite_filters.enabled = true;
-          security.pki.crlite_mode = 2;
-          security.ssl.treat_unsafe_negotiation_as_broken = true;
-          browser.xul.error_pages.expert_bad_cert = true;
-          security.tls.enable_0rtt_data = false;
-          browser.privatebrowsing.forceMediaMemoryCache = true;
-          browser.sessionstore.interval = 60000;
-          privacy.history.custom = true;
-          browser.search.separatePrivateDefault.ui.enabled = true;
-          browser.urlbar.update2.engineAliasRefresh = true;
-          browser.search.suggest.enabled = false;
-          browser.urlbar.suggest.quicksuggest.sponsored = false;
-          browser.urlbar.suggest.quicksuggest.nonsponsored = false;
-          browser.formfill.enable = false;
-          security.insecure_connection_text.enabled = true;
-          security.insecure_connection_text.pbmode.enabled = true;
-          network.IDN_show_punycode = true;
-          dom.security.https_first = true;
-          dom.security.https_first_schemeless = true;
-          signon.formlessCapture.enabled = false;
-          signon.privateBrowsingCapture.enabled = false;
-          network.auth.subresource-http-auth-allow = 1;
-          editor.truncate_user_pastes = false;
-          security.mixed_content.block_display_content = true;
-          security.mixed_content.upgrade_display_content = true;
-          pdfjs.enableScripting = false;
-          extensions.postDownloadThirdPartyPrompt = false;
-          network.http.referer.XOriginTrimmingPolicy = 2;
-          privacy.userContext.ui.enabled = true;
-          media.peerconnection.ice.proxy_only_if_behind_proxy = true;
-          media.peerconnection.ice.default_address_only = true;
-          browser.safebrowsing.downloads.remote.enabled = false;
-          permissions.default.desktop-notification = 2;
-          permissions.default.geo = 2;
-          geo.provider.network.url = "https://location.services.mozilla.com/v1/geolocate?key=%MOZILLA_API_KEY%";
-          permissions.manager.defaultsUrl = "";
-          webchannel.allowObject.urlWhitelist = "";
-          datareporting.policy.dataSubmissionEnabled = false;
-          datareporting.healthreport.uploadEnabled = false;
-          toolkit.telemetry.unified = false;
-          toolkit.telemetry.enabled = false;
-          toolkit.telemetry.server = "data:,";
-          toolkit.telemetry.archive.enabled = false;
-          toolkit.telemetry.newProfilePing.enabled = false;
-          toolkit.telemetry.shutdownPingSender.enabled = false;
-          toolkit.telemetry.updatePing.enabled = false;
-          toolkit.telemetry.bhrPing.enabled = false;
-          toolkit.telemetry.firstShutdownPing.enabled = false;
-          toolkit.telemetry.coverage.opt-out = true;
-          toolkit.coverage.opt-out = true;
-          toolkit.coverage.endpoint.base = "";
-          browser.ping-centre.telemetry = false;
-          browser.newtabpage.activity-stream.feeds.telemetry = false;
-          browser.newtabpage.activity-stream.telemetry = false;
-          app.shield.optoutstudies.enabled = false;
-          app.normandy.enabled = false;
-          app.normandy.api_url = "";
-          breakpad.reportURL = "";
-          browser.tabs.crashReporting.sendReport = false;
-          browser.crashReports.unsubmittedCheck.autoSubmit2 = false;
-          captivedetect.canonicalURL = "";
-          network.captive-portal-service.enabled = false;
-          network.connectivity-service.enabled = false;
-          browser.privatebrowsing.vpnpromourl = "";
-          extensions.getAddons.showPane = false;
-          extensions.htmlaboutaddons.recommendations.enabled = false;
-          browser.discovery.enabled = false;
-          browser.shell.checkDefaultBrowser = false;
-          browser.newtabpage.activity-stream.asrouter.userprefs.cfr.addons = false;
-          browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features = false;
-          browser.preferences.moreFromMozilla = false;
-          browser.tabs.tabmanager.enabled = false;
-          browser.aboutConfig.showWarning = false;
-          browser.aboutwelcome.enabled = false;
-          toolkit.legacyUserProfileCustomizations.stylesheets = true;
-          browser.compactmode.show = true;
-          browser.display.focus_ring_on_anything = true;
-          browser.display.focus_ring_style = 0;
-          browser.display.focus_ring_width = 0;
-          layout.css.prefers-color-scheme.content-override = 2;
-          browser.privateWindowSeparation.enabled = false;
-          cookiebanners.service.mode = 1;
-          full-screen-api.transition-duration.enter = "0 0";
-          full-screen-api.transition-duration.leave = "0 0";
-          full-screen-api.warning.delay = -1;
-          full-screen-api.warning.timeout = 0;
-          browser.urlbar.suggest.calculator = true;
-          browser.urlbar.unitConversion.enabled = true;
-          browser.urlbar.trending.featureGate = false;
-          browser.newtabpage.activity-stream.feeds.topsites = false;
-          browser.newtabpage.activity-stream.feeds.section.topstories = false;
-          extensions.pocket.enabled = false;
-          browser.download.always_ask_before_handling_new_types = true;
-          browser.download.manager.addToRecentDocs = false;
-          browser.download.open_pdf_attachments_inline = true;
-          browser.bookmarks.openInTabClosesMenu = false;
-          browser.menu.showViewImageInfo = true;
-          findbar.highlightAll = true;
-          layout.word_select.eat_space_to_next_word = false;
+
+    firefox = {
+      policies = {
+        EnableTrackingProtection = true;
+        OfferToSaveLogins = false;
+      };
+
+      package = pkgs.firefox-wayland;
+      enable = true;
+
+      profiles = {
+        default = {
+          id = 0;
+          name = "default";
+          isDefault = true;
+
+          extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+            ublock-origin
+            tree-style-tab
+            firefox-color
+            vimium
+            metamask
+          ];
+
+          settings = {
+            media = {
+              memory_cache_max_size = 65536;
+              cache_readahead_limit = 7200;
+              cache_resume_threshold = 3600;
+              peerconnection.ice = {
+                proxy_only_if_behind_proxy = true;
+                default_address_only = true;
+              };
+            };
+
+            gfx = {
+              content.skia-font-cache-size = 20;
+              canvas.accelerated = {
+                cache-items = 4096;
+                cache-size = 512;
+              };
+            };
+
+            network = {
+              http = {
+                max-connections = 1800;
+                max-persistent-connections-per-server = 10;
+                max-urgent-start-excessive-connections-per-host = 5;
+                referer.XOriginTrimmingPolicy = 2;
+              };
+
+              buffer.cache = {
+                size = 262144;
+                count = 128;
+              };
+
+              dns = {
+                max_high_priority_threads = 8;
+                disablePrefetch = true;
+              };
+
+              pacing.requests.enabled = false;
+              dnsCacheExpiration = 3600;
+              ssl_tokens_cache_capacity = 10240;
+              prefetch-next = false;
+              predictor.enabled = false;
+              cookie.sameSite.noneRequiresSecure = true;
+              IDN_show_punycode = true;
+              auth.subresource-http-auth-allow = 1;
+              captive-portal-service.enabled = false;
+              connectivity-service.enabled = false;
+            };
+
+            browser = {
+              download = {
+                always_ask_before_handling_new_types = true;
+                manager.addToRecentDocs = false;
+                open_pdf_attachments_inline = true;
+                start_downloads_in_tmp_dir = true;
+              };
+
+              urlbar = {
+                suggest.quicksuggest.sponsored = false;
+                suggest.quicksuggest.nonsponsored = false;
+                suggest.calculator = true;
+                update2.engineAliasRefresh = true;
+                unitConversion.enabled = true;
+                trending.featureGate = false;
+              };
+
+              search = {
+                separatePrivateDefault.ui.enabled = true;
+                suggest.enabled = false;
+              };
+
+              newtabpage.activity-stream = {
+                feeds = {
+                  topsites = false;
+                  section.topstories = false;
+                  telemetry = false;
+                };
+                asrouter.userprefs.cfr = {
+                  addons = false;
+                  features = false;
+                };
+                telemetry = false;
+              };
+
+              privatebrowsing = {
+                vpnpromourl = "";
+                forceMediaMemoryCache = true;
+              };
+
+              display = {
+                focus_ring_on_anything = true;
+                focus_ring_style = 0;
+                focus_ring_width = 0;
+              };
+
+              cache.jsbc_compression_level = 3;
+              helperApps.deleteTempFileOnExit = true;
+              uitour.enabled = false;
+              sessionstore.interval = 60000;
+              formfill.enable = false;
+              xul.error_pages.expert_bad_cert = true;
+              contentblocking.category = "strict";
+              ping-centre.telemetry = false;
+              discovery.enabled = false;
+              shell.checkDefaultBrowser = false;
+              preferences.moreFromMozilla = false;
+              tabs.tabmanager.enabled = false;
+              aboutConfig.showWarning = false;
+              aboutwelcome.enabled = false;
+              bookmarks.openInTabClosesMenu = false;
+              menu.showViewImageInfo = true;
+              compactmode.show = true;
+              safebrowsing.downloads.remote.enabled = false;
+              tabs.crashReporting.sendReport = false;
+              crashReports.unsubmittedCheck.autoSubmit2 = false;
+              privateWindowSeparation.enabled = false;
+            };
+
+            security = {
+              mixed_content = {
+                block_display_content = true;
+                upgrade_display_content = true;
+              };
+              insecure_connection_text = {
+                enabled = true;
+                pbmode.enabled = true;
+              };
+              OCSP.enabled = 0;
+              remote_settings.crlite_filters.enabled = true;
+              pki.crlite_mode = 2;
+              ssl.treat_unsafe_negotiation_as_broken = true;
+              tls.enable_0rtt_data = false;
+            };
+
+            toolkit = {
+              telemetry = {
+                unified = false;
+                enabled = false;
+                server = "data:,";
+                archive.enabled = false;
+                newProfilePing.enabled = false;
+                shutdownPingSender.enabled = false;
+                updatePing.enabled = false;
+                bhrPing.enabled = false;
+                firstShutdownPing.enabled = false;
+                coverage.opt-out = true;
+              };
+              coverage = {
+                opt-out = true;
+                endpoint.base = "";
+              };
+              legacyUserProfileCustomizations.stylesheets = true;
+            };
+
+            dom = {
+              security = {
+                https_first = true;
+                https_first_schemeless = true;
+                sanitizer.enabled = true;
+              };
+              enable_web_task_scheduling = true;
+            };
+
+            layout = {
+              css = {
+                grid-template-masonry-value.enabled = true;
+                has-selector.enabled = true;
+                prefers-color-scheme.content-override = 2;
+              };
+              word_select.eat_space_to_next_word = false;
+            };
+
+            urlclassifier = {
+              trackingSkipURLs = "*.reddit.com, *.twitter.com, *.twimg.com, *.tiktok.com";
+              features.socialtracking.skipURLs = "*.instagram.com, *.twitter.com, *.twimg.com";
+            };
+
+            privacy = {
+              globalprivacycontrol.enabled = true;
+              history.custom = true;
+              userContext.ui.enabled = true;
+            };
+
+            full-screen-api = {
+              transition-duration = {
+                enter = "0 0";
+                leave = "0 0";
+              };
+              warning = {
+                delay = -1;
+                timeout = 0;
+              };
+            };
+
+            permissions.default = {
+              desktop-notification = 2;
+              geo = 2;
+            };
+
+            signon = {
+              formlessCapture.enabled = false;
+              privateBrowsingCapture.enabled = false;
+            };
+
+            datareporting = {
+              policy.dataSubmissionEnabled = false;
+              healthreport.uploadEnabled = false;
+            };
+
+            extensions = {
+              pocket.enabled = false;
+              getAddons.showPane = false;
+              htmlaboutaddons.recommendations.enabled = false;
+              postDownloadThirdPartyPrompt = false;
+            };
+
+            app = {
+              shield.optoutstudies.enabled = false;
+              normandy.enabled = false;
+              normandy.api_url = "";
+            };
+
+            image.mem.decode_bytes_at_a_time = 32768;
+            editor.truncate_user_pastes = false;
+            pdfjs.enableScripting = false;
+            geo.provider.network.url = "https://location.services.mozilla.com/v1/geolocate?key=%MOZILLA_API_KEY%";
+            permissions.manager.defaultsUrl = "";
+            webchannel.allowObject.urlWhitelist = "";
+            breakpad.reportURL = "";
+            captivedetect.canonicalURL = "";
+            cookiebanners.service.mode = 1;
+            findbar.highlightAll = true;
+            content.notify.interval = 100000;
+          };
         };
       };
     };
-  };
-  programs.waybar = {
-    enable = true;
-    style = ''
+    waybar = {
+      enable = true;
+      style = ''
       * {
           border: none;
           border-radius: 0px;
@@ -860,137 +972,138 @@
           font-weight: bold;
       }
     '';
-    settings = {
-      mainBar = {
-        layer = "top";
-        position = "top";
-        height = 50;
+      settings = {
+        mainBar = {
+          layer = "top";
+          position = "top";
+          height = 50;
 
-        output = [
-          "HDMI-A-1"
-          "DP-2"
-          "DP-3"
-        ];
+          output = [
+            "HDMI-A-1"
+            "DP-2"
+            "DP-3"
+          ];
 
-        modules-left = [ "hyprland/workspaces" ];
-        modules-center = [ "hyprland/window" ];
-        modules-right = [ "battery" "clock" ];
+          modules-left = [ "hyprland/workspaces" ];
+          modules-center = [ "hyprland/window" ];
+          modules-right = [ "battery" "clock" ];
 
-        clock = {
-          format = "{:%a %d, %b %H:%M}";
+          clock = {
+            format = "{:%a %d, %b %H:%M}";
+          };
         };
       };
     };
-  };
 
-  programs.zsh = {
-    enable = true;
-    initExtra = ''
+    zsh = {
+      enable = true;
+      initExtra = ''
     export CUDA_PATH=${pkgs.cudatoolkit}
     # export LD_LIBRARY_PATH=${pkgs.linuxPackages.nvidia_x11}/lib
     export EXTRA_LDFLAGS="-L/lib -L${pkgs.linuxPackages.nvidia_x11}/lib"
     export EXTRA_CCFLAGS="-I/usr/include"
     source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
     '';
-    localVariables = {
-      EDITOR = "emacsclient --create-frame --alternate-editor=vim";
-      INPUT_METHOD = "fcitx";
-      QT_IM_MODULE = "fcitx";
-      GTK_IM_MODULE = "fcitx";
-      XMODIFIERS = "@im=fcitx";
-      XIM_SERVERS = "fcitx";
-      WXSUPPRESS_SIZER_FLAGS_CHECK = "1";
-    };
-    shellAliases = {
-      c = "clear";
-      g = "git";
-      v = "vim";
-      py = "python3";
-      rb = "sudo nixos-rebuild switch";
-      nfu = "cd /etc/nixos/ && sudo nix flake update";
-    };
-    loginExtra = ''
+      localVariables = {
+        EDITOR = "emacsclient --create-frame --alternate-editor=vim";
+        INPUT_METHOD = "fcitx";
+        QT_IM_MODULE = "fcitx";
+        GTK_IM_MODULE = "fcitx";
+        XMODIFIERS = "@im=fcitx";
+        XIM_SERVERS = "fcitx";
+        WXSUPPRESS_SIZER_FLAGS_CHECK = "1";
+      };
+      shellAliases = {
+        c = "clear";
+        g = "git";
+        v = "vim";
+        py = "python3";
+        rb = "sudo nixos-rebuild switch";
+        nfu = "cd /etc/nixos/ && sudo nix flake update";
+      };
+      loginExtra = ''
 if [ "$(tty)" = "/dev/tty1" ];then
   exec Hyprland
 fi
     '';
-  };
+    };
 
-  programs.emacs = {
-    enable = true;
-    package = pkgs.emacs29-pgtk;
-    extraConfig = ''
+    emacs = {
+      enable = true;
+      package = pkgs.emacs29-pgtk;
+      extraConfig = ''
       (setq debug-on-error t)
       (org-babel-load-file
         (expand-file-name "~/org/website/config/emacs.org"))'';
-    extraPackages = epkgs: [
-      epkgs.nix-mode
-      epkgs.emms
-      epkgs.magit
-      epkgs.vterm
-      epkgs.auctex
-      epkgs.use-package
-      epkgs.evil
-      epkgs.evil-collection
-      epkgs.org-roam
-      epkgs.org-journal
-      epkgs.general
-      epkgs.which-key
-      epkgs.gruvbox-theme
-      epkgs.elfeed
-      epkgs.elfeed-org
-      epkgs.doom-modeline
-      epkgs.dashboard
-      epkgs.org-superstar
-      epkgs.projectile
-      epkgs.lsp-mode
-      epkgs.ivy
-      epkgs.lsp-ivy
-      epkgs.all-the-icons
-      epkgs.page-break-lines
-      epkgs.counsel
-      epkgs.mu4e
-      epkgs.yasnippet
-      epkgs.yasnippet-snippets
-      epkgs.company
-      epkgs.pinentry
-      epkgs.pdf-tools
-      epkgs.ivy-pass
-      epkgs.magit-delta
-      epkgs.sudo-edit
-      epkgs.evil-commentary
-      epkgs.evil-org
-      epkgs.catppuccin-theme
-      epkgs.htmlize
-      epkgs.web-mode
-      epkgs.emmet-mode
-      epkgs.ement
-      epkgs.rustic
-      epkgs.chatgpt-shell
-      epkgs.ellama
-      epkgs.latex-preview-pane
-      epkgs.treemacs
-      epkgs.treemacs-projectile
-      epkgs.treemacs-evil
-      epkgs.treemacs-magit
-      epkgs.treesit-auto
-      epkgs.gptel
-      epkgs.elpher
-      epkgs.lyrics-fetcher
-      epkgs.password-store
-      epkgs.org-roam-ui
-      epkgs.websocket
-      epkgs.simple-httpd
-      epkgs.f
-      epkgs.org-fragtog
-      epkgs.enwc
-      epkgs.writegood-mode
-    ];
-  };
+      extraPackages = epkgs: [
+        epkgs.nix-mode
+        epkgs.emms
+        epkgs.magit
+        epkgs.vterm
+        epkgs.auctex
+        epkgs.use-package
+        epkgs.evil
+        epkgs.evil-collection
+        epkgs.org-roam
+        epkgs.org-journal
+        epkgs.general
+        epkgs.which-key
+        epkgs.gruvbox-theme
+        epkgs.elfeed
+        epkgs.elfeed-org
+        epkgs.doom-modeline
+        epkgs.dashboard
+        epkgs.org-superstar
+        epkgs.projectile
+        epkgs.lsp-mode
+        epkgs.ivy
+        epkgs.lsp-ivy
+        epkgs.all-the-icons
+        epkgs.page-break-lines
+        epkgs.counsel
+        epkgs.mu4e
+        epkgs.yasnippet
+        epkgs.yasnippet-snippets
+        epkgs.company
+        epkgs.pinentry
+        epkgs.pdf-tools
+        epkgs.ivy-pass
+        epkgs.magit-delta
+        epkgs.sudo-edit
+        epkgs.evil-commentary
+        epkgs.evil-org
+        epkgs.catppuccin-theme
+        epkgs.htmlize
+        epkgs.web-mode
+        epkgs.emmet-mode
+        epkgs.ement
+        epkgs.rustic
+        epkgs.chatgpt-shell
+        epkgs.ellama
+        epkgs.latex-preview-pane
+        epkgs.treemacs
+        epkgs.treemacs-projectile
+        epkgs.treemacs-evil
+        epkgs.treemacs-magit
+        epkgs.treesit-auto
+        epkgs.gptel
+        epkgs.elpher
+        epkgs.lyrics-fetcher
+        epkgs.password-store
+        epkgs.org-roam-ui
+        epkgs.websocket
+        epkgs.simple-httpd
+        epkgs.f
+        epkgs.org-fragtog
+        epkgs.enwc
+        epkgs.writegood-mode
+        epkgs.scad-mode
+      ];
+    };
 
-  programs.mbsync = {
-    enable = true;
-    extraConfig = ''
+    mbsync = {
+      enable = true;
+      extraConfig = ''
       IMAPAccount prestonpan
       Host imap.gmail.com
       User ret2pop@gmail.com
@@ -1017,11 +1130,11 @@ fi
       Expunge None
       SyncState *
     '';
-  };
+    };
 
-  programs.msmtp = {
-    enable = true;
-    extraConfig = ''
+    msmtp = {
+      enable = true;
+      extraConfig = ''
       # Set default values for all following accounts.
       defaults
       auth           on
@@ -1042,28 +1155,33 @@ fi
       # Set a default account
       account default : preston
     '';
-  };
-
-  programs.bash = {
-    enable = true;
-  };
-
-  programs.git = {
-    enable = true;
-    userName = "Preston Pan";
-    userEmail = "preston@nullring.xyz";
-    signing.key = "2B749D1FB976E81613858E490290504780B30E20";
-    signing.signByDefault = true;
-    extraConfig = {
-      init.defaultBranch = "main";
     };
-    aliases = {
-      co = "checkout";
-      c = "commit";
-      a = "add";
-      s = "switch";
-      b = "branch";
+
+    bash = {
+      enable = true;
     };
+
+    git = {
+      enable = true;
+      userName = "Preston Pan";
+      userEmail = "preston@nullring.xyz";
+      signing = {
+        key = "2B749D1FB976E81613858E490290504780B30E20";
+        signByDefault = true;
+      };
+      extraConfig = {
+        init.defaultBranch = "main";
+      };
+      aliases = {
+        co = "checkout";
+        c = "commit";
+        a = "add";
+        s = "switch";
+        b = "branch";
+      };
+    };
+
+    home-manager.enable = true;
   };
 
   wayland.windowManager.hyprland = {
@@ -1071,12 +1189,6 @@ fi
     package = pkgs.hyprland;
     xwayland.enable = true;
     systemd.enable = true;
-#     extraConfig = ''
-#       device = {
-#         name = beken-usb-gaming-mouse-1
-#         sensitivity = 0.5
-#       };
-# '';
     settings = {
       "$mod" = "SUPER";
       exec-once = [
@@ -1211,6 +1323,8 @@ fi
     ];
   };
 
-  programs.home-manager.enable = true;
+  fonts.fontconfig.enable = true;
+  xsession.enable = true;
+  nixpkgs.config.cudaSupport = true;
 }
 

@@ -9,17 +9,19 @@
       url = "github:nix-community/home-manager/release-23.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nur.url = "github:nix-community/NUR";
+
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nur.url = "github:nix-community/NUR";
     wallpapers.url = "github:ret2pop/wallpapers";
     sops-nix.url = "github:Mic92/sops-nix";
     scripts.url = "github:ret2pop/scripts";
   };
 
-  outputs = { self, nixpkgs, home-manager, nur, disko, wallpapers, sops-nix, scripts, ... }@attrs: {
+  outputs = { nixpkgs, home-manager, nur, disko, ... }@attrs: {
     nixosConfigurations = {
       live = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -41,13 +43,16 @@
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager
           {
-            home-manager.useGlobalPkgs = true;
-            home-manager.extraSpecialArgs = attrs;
-            home-manager.useUserPackages = true;
-            home-manager.users.preston = import ./home.nix;
+            home-manager = {
+              useGlobalPkgs = true;
+              extraSpecialArgs = attrs;
+              useUserPackages = true;
+              users.preston = import ./home.nix;
+            };
           }
         ];
       };
+
       continuity = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = attrs;
@@ -67,10 +72,12 @@
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager
           {
-            home-manager.useGlobalPkgs = true;
-            home-manager.extraSpecialArgs = attrs;
-            home-manager.useUserPackages = true;
-            home-manager.users.preston = import ./home.nix;
+            home-manager = {
+              useGlobalPkgs = true;
+              extraSpecialArgs = attrs;
+              useUserPackages = true;
+              users.preston = import ./home.nix;
+            };
           }
         ];
       };
