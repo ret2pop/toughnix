@@ -5,11 +5,16 @@
     username = "preston";
     homeDirectory = "/home/preston";
     stateVersion = "23.11";
+    
     packages = with pkgs; [
       alsa-scarlett-gui
+      ardour
+      audacity
       autobuild
+      bisq-desktop
       bear
       blender
+      bun
       cargo
       clang
       clang-tools
@@ -17,10 +22,10 @@
       cowsay
       croc
       curl
+      dmenu
       electrum
       ffmpeg
       fira-code
-      fluffychat
       fswebcam
       ghostscript
       git
@@ -31,11 +36,13 @@
       helvum
       imagemagick
       inkscape
-      kdenlive
+      # kdenlive
       kicad
       krita
       light
+      libnotify
       monero-gui
+      monero-cli
       mpc-cli
       mu
       nixd
@@ -57,12 +64,18 @@
       python3
       python312Packages.jedi
       qsynth
+      qpwgraph
       rsync
       rust-analyzer
+      rustfmt
+      slack
+      sox
       swww
       telegram-desktop
       texliveFull
       timeshift
+      # typescript-language-server
+      typescript
       tor-browser
       veracrypt
       vesktop
@@ -71,6 +84,7 @@
       wget
       x11_ssh_askpass
       xdg-utils
+      signal-desktop
       (aspellWithDicts
         (dicts: with dicts; [ en en-computers en-science ]))
       (nerdfonts.override { fonts = [ "Iosevka" ]; })
@@ -79,9 +93,22 @@
   };
 
   services = {
-    gpg-agent = {
+    mako = {
       enable = true;
-      pinentryFlavor = "emacs";
+      backgroundColor = "#11111bf8";
+      textColor = "#cdd6f4";
+      borderColor = "#89b4faff";
+      borderRadius = 1;
+      font = "Fira Code 10";
+      defaultTimeout = 3000;
+      extraConfig = ''
+on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
+'';
+    };
+
+    gpg-agent = {
+      pinentryPackage = pkgs.pinentry-emacs;
+      enable = true;
       extraConfig = ''
       allow-emacs-pinentry
       allow-loopback-pinentry
@@ -93,11 +120,12 @@
       provider = "manual";
       latitude = 49.282730;
       longitude = -123.120735;
-     
+      
       temperature = {
-      day = 5000;
-      night = 3000;
+        day = 5000;
+        night = 3000;
       };
+
       settings = {
         general = {
           adjustment-method = "wayland";
@@ -130,24 +158,6 @@
        	tags            "yes"			# httpd supports sending tags to listening streams.
       }
     '';
-    };
-
-    pantalaimon = {
-      enable = true;
-      settings = {
-        Default = {
-          LogLevel = "Debug";
-          SSL = true;
-        };
-        local-matrix = {
-          Homeserver = "https://social.nullring.xyz";
-          ListenAddress = "0.0.0.0";
-          ListenPort = 8008;
-          SSL = false;
-          UseKeyring = false;
-          IgnoreVerification = true;
-        };
-      };
     };
   };
 
@@ -1021,11 +1031,12 @@
         py = "python3";
         rb = "sudo nixos-rebuild switch";
         nfu = "cd /etc/nixos/ && sudo nix flake update";
+        i3 = "exec ${pkgs.i3-gaps}/bin/i3";
       };
       loginExtra = ''
-if [ "$(tty)" = "/dev/tty1" ];then
-  exec Hyprland
-fi
+#if [ "$(tty)" = "/dev/tty1" ];then
+#  exec Hyprland
+#fi
     '';
     };
 
@@ -1037,68 +1048,69 @@ fi
       (org-babel-load-file
         (expand-file-name "~/org/website/config/emacs.org"))'';
       extraPackages = epkgs: [
-        epkgs.nix-mode
-        epkgs.emms
-        epkgs.magit
-        epkgs.vterm
+        epkgs.all-the-icons
         epkgs.auctex
-        epkgs.use-package
-        epkgs.evil
-        epkgs.evil-collection
-        epkgs.org-roam
-        epkgs.org-journal
-        epkgs.general
-        epkgs.which-key
-        epkgs.gruvbox-theme
+        epkgs.catppuccin-theme
+        epkgs.chatgpt-shell
+        epkgs.company
+        epkgs.counsel
+        epkgs.dashboard
+        epkgs.doom-modeline
         epkgs.elfeed
         epkgs.elfeed-org
-        epkgs.doom-modeline
-        epkgs.dashboard
-        epkgs.org-superstar
-        epkgs.projectile
-        epkgs.lsp-mode
-        epkgs.ivy
-        epkgs.lsp-ivy
-        epkgs.all-the-icons
-        epkgs.page-break-lines
-        epkgs.counsel
-        epkgs.mu4e
-        epkgs.yasnippet
-        epkgs.yasnippet-snippets
-        epkgs.company
-        epkgs.pinentry
-        epkgs.pdf-tools
-        epkgs.ivy-pass
-        epkgs.magit-delta
-        epkgs.sudo-edit
+        epkgs.ellama
+        epkgs.elpher
+        epkgs.ement
+        epkgs.emmet-mode
+        epkgs.emms
+        epkgs.enwc
+        epkgs.evil
+        epkgs.evil-collection
         epkgs.evil-commentary
         epkgs.evil-org
-        epkgs.catppuccin-theme
+        epkgs.f
+        epkgs.general
+        epkgs.gptel
+        epkgs.gruvbox-theme
         epkgs.htmlize
-        epkgs.web-mode
-        epkgs.emmet-mode
-        epkgs.ement
-        epkgs.rustic
-        epkgs.chatgpt-shell
-        epkgs.ellama
+        epkgs.ivy
+        epkgs.ivy-pass
         epkgs.latex-preview-pane
+        epkgs.lsp-ivy
+        epkgs.lsp-mode
+        epkgs.lyrics-fetcher
+        epkgs.magit
+        epkgs.magit-delta
+        epkgs.mu4e
+        epkgs.nix-mode
+        epkgs.org-fragtog
+        epkgs.org-journal
+        epkgs.org-roam
+        epkgs.org-roam-ui
+        epkgs.org-superstar
+        epkgs.page-break-lines
+        epkgs.password-store
+        epkgs.pdf-tools
+        epkgs.pinentry
+        epkgs.projectile
+        epkgs.rustic
+        epkgs.scad-mode
+        epkgs.simple-httpd
+        epkgs.sudo-edit
         epkgs.treemacs
-        epkgs.treemacs-projectile
         epkgs.treemacs-evil
         epkgs.treemacs-magit
+        epkgs.treemacs-projectile
         epkgs.treesit-auto
-        epkgs.gptel
-        epkgs.elpher
-        epkgs.lyrics-fetcher
-        epkgs.password-store
-        epkgs.org-roam-ui
+        epkgs.typescript-mode
+        epkgs.use-package
+        epkgs.vterm
+        epkgs.web-mode
         epkgs.websocket
-        epkgs.simple-httpd
-        epkgs.f
-        epkgs.org-fragtog
-        epkgs.enwc
+        epkgs.which-key
         epkgs.writegood-mode
-        epkgs.scad-mode
+        epkgs.yasnippet
+        epkgs.yasnippet-snippets
       ];
     };
 
@@ -1181,7 +1193,6 @@ fi
         b = "branch";
       };
     };
-
     home-manager.enable = true;
   };
 
@@ -1261,12 +1272,12 @@ fi
                 let
                   c = (x + 1) / 10;
                 in
-                builtins.toString (x + 1 - (c * 10));
+                  builtins.toString (x + 1 - (c * 10));
             in
-            [
-              "$mod, ${ws}, workspace, ${toString (x + 1)}"
-              "$mod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
-            ]
+              [
+                "$mod, ${ws}, workspace, ${toString (x + 1)}"
+                "$mod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
+              ]
           )
           10)
       );
@@ -1314,10 +1325,17 @@ fi
     };
   };
 
+  gtk = {
+    enable = true;
+    theme = null;
+    iconTheme = null;
+  };
+
   i18n.inputMethod = {
     enabled = "fcitx5";
     fcitx5.addons = with pkgs; [
       fcitx5-gtk
+      fcitx5-chinese-addons
       fcitx5-configtool
       fcitx5-mozc
       fcitx5-rime
@@ -1325,7 +1343,20 @@ fi
   };
 
   fonts.fontconfig.enable = true;
-  xsession.enable = true;
+  # xsession = {
+  #   enable = true;
+  #   windowManager.i3 = {
+  #     enable = true;
+  #     package = pkgs.i3-gaps;
+  #     config = {
+  #       modifier = "Mod4";
+  #       gaps = {
+  #         inner = 10;
+  #         outer = 5;
+  #       };
+  #     };
+  #   };
+  # };
   nixpkgs.config.cudaSupport = true;
 }
 

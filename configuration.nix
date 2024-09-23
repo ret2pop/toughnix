@@ -6,16 +6,19 @@
       ./hardware-configuration.nix
     ];
 
-  boot.loader = {
-    systemd-boot.enable = true;
-    efi.canTouchEfiVariables = true;
+
+  boot = {
+    loader = {
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+    };
   };
 
   networking = {
     hostName = "continuity";
     networkmanager.enable = true;
     firewall = {
-      allowedTCPPorts = [ 80 443 6600 8000 11434 7777 ];
+      allowedTCPPorts = [ 80 443 6600 8000 18080 37889 11434 7777 ];
     };
   };
 
@@ -24,7 +27,8 @@
       enable = true;
       powerOnBoot = true;
     };
-    graphics = {
+
+    opengl = {
       enable = true;
       extraPackages = with pkgs; [
         vaapiVdpau
@@ -32,6 +36,7 @@
         nvidia-vaapi-driver
       ];
     };
+
     nvidia = {
       modesetting.enable = true;
       powerManagement = {
@@ -46,20 +51,34 @@
   };
 
   services = {
+    dbus = {
+      apparmor = "enabled";
+    };
+
     xserver = {
-      enable = true;
       displayManager = {
         startx.enable = true;
       };
+
+      windowManager = {
+        i3 = {
+          enable = true;
+          package = pkgs.i3-gaps;
+        };
+      };
+
       desktopManager = {
         runXdgAutostartIfNone = true;
       };
-      videoDrivers = [ "nvidia" ];
+
       xkb = {
         layout = "us";
         variant = "";
         options = "caps:escape";
       };
+
+      videoDrivers = [ "nvidia" ];
+      enable = true;
     };
 
     pipewire = {
@@ -70,7 +89,7 @@
       };
       pulse.enable = true;
       jack.enable = true;
-      #media-session.enable = true;
+      wireplumber.enable = true;
     };
 
     kanata = {
@@ -82,7 +101,6 @@
       enable = true;
       user = "preston";
       openFirewall = true;
-      # group = "preston";
 
       listen = {
         port = 9999;
@@ -97,10 +115,49 @@
       };
     };
 
+    monero = {
+      enable = true;
+    };
+
+    tor = {
+      enable = true;
+      openFirewall = true;
+    };
+
+    i2pd = {
+      enable = true;
+      address = "0.0.0.0";
+      inTunnels = {
+      };
+      outTunnels = {
+      };
+    };
+
     ollama = {
       enable = true;
       acceleration = "cuda";
-      host = "0.0.0.0";
+      # host = "0.0.0.0";
+    };
+
+    # Email Service
+    dovecot2 = {
+      enable = true;
+      enableImap = true;
+      enablePop3 = true;
+    };
+
+    postfix = {
+      enable = true;
+      config = {
+      };
+    };
+
+    # Git server
+    gitDaemon = {
+      enable = true;
+      exportAll = true;
+      listenAddress = "0.0.0.0";
+      basePath = "/srv/git";
     };
 
     openssh = {
@@ -114,13 +171,73 @@
 
     nginx = {
       enable = true;
+
+      # Use recommended settings
+      recommendedGzipSettings = true;
+      recommendedOptimisation = true;
+      recommendedProxySettings = true;
+      recommendedTlsSettings = true;
+
+      # Only allow PFS-enabled ciphers with AES256
+      sslCiphers = "AES256+EECDH:AES256+EDH:!aNULL";
+      
+      appendHttpConfig = ''
+      # Add HSTS header with preloading to HTTPS requests.
+      # Adding this header to HTTP requests is discouraged
+      map $scheme $hsts_header {
+          https   "max-age=31536000; includeSubdomains; preload";
+      }
+      add_header Strict-Transport-Security $hsts_header;
+
+      # Enable CSP for your services.
+      #add_header Content-Security-Policy "script-src 'self'; object-src 'none'; base-uri 'none';" always;
+
+      # Minimize information leaked to other domains
+      add_header 'Referrer-Policy' 'origin-when-cross-origin';
+
+      # Disable embedding as a frame
+      add_header X-Frame-Options DENY;
+
+      # Prevent injection of code in other mime types (XSS Attacks)
+      add_header X-Content-Type-Options nosniff;
+
+      # This might create errors
+      proxy_cookie_path / "/; secure; HttpOnly; SameSite=strict";
+    '';
+
+      virtualHosts = {
+        "ret2pop.net" = {
+          # addSSL = true;
+          # enableACME = true;
+          root = "/home/preston/ret2pop-website/";
+        };
+      };
     };
 
+    # xmrig = {
+    #   enable = true;
+    #   package = pkgs.xmrig-mo;
+    #   settings = {
+    #     autosave = true;
+    #     cpu = true;
+    #     opencl = false;
+    #     cuda = false;
+    #     pools = [
+    #       {
+    #         url = "pool.supportxmr.com:443";
+    #         user = "49Yyj1PBXSefihA88bm8RzaKiaBizrDoWTnQy4kKVRWU5vnnqx7CfWbEe9ioKTozYWBMa9Am81q9uMgBdhj8iAriF47TQnM";
+    #         keepalive = true;
+    #         tls = true;
+    #       }
+    #     ];
+    #   };
+    # };
+
     # Misc.
-    udev.packages = [ 
-      pkgs.platformio-core
-      pkgs.platformio-core.udev
-      pkgs.openocd
+    udev.packages = with pkgs; [ 
+      platformio-core
+      platformio-core.udev
+      openocd
     ];
 
     printing.enable = true;
@@ -142,10 +259,22 @@
     ];
   };
 
+  security = {
+    # acme = {
+    #   acceptTerms = true;
+    #   defaults.email = "ret2pop@gmail.com";
+    # };
+
+    rtkit.enable = true;
+
+    lockKernelModules = true;
+    protectKernelImage = true;
+  };
+
   xdg.portal = {
     enable = true;
     wlr.enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal pkgs.xdg-desktop-portal-hyprland ];
+    extraPortals = with pkgs; [ xdg-desktop-portal-gtk xdg-desktop-portal xdg-desktop-portal-hyprland ];
     config.common.default = "*";
   };
 
@@ -165,12 +294,22 @@
     root.openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINSshvS1N/42pH9Unp3Zj4gjqs9BXoin99oaFWYHXZDJ preston@preston-arch"
     ];
+
+    git = {
+      isSystemUser = true;
+      home = "/srv/git";
+      shell = "${pkgs.git}/bin/git-shell";
+      openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINSshvS1N/42pH9Unp3Zj4gjqs9BXoin99oaFWYHXZDJ preston@preston-arch"
+      ];
+    };
+
     preston = {
       isNormalUser = true;
       description = "Preston Pan";
       extraGroups = [ "networkmanager" "wheel" "video" "docker" ];
       shell = pkgs.zsh;
-      packages = with pkgs; [
+      packages = [
       ];
     };
   };
@@ -178,8 +317,6 @@
   nix.settings.experimental-features = "nix-command flakes";
 
   virtualisation.docker.enable = true;
-  security.rtkit.enable = true;
-  # services.xserver.libinput.enable = true;
 
   time.timeZone = "America/Vancouver";
   i18n.defaultLocale = "en_CA.UTF-8";
