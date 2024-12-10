@@ -19,7 +19,7 @@
     ];
     kernelParams = [
       "usbcore.autosuspend=-1"
-      "usbcore.quirks=0763:0015:iou"
+      "usbcore.quirks=0763:0015:i"
     ];
     # kernelPackages = pkgs.linuxKernel.packages.linux_6_1;
   };
