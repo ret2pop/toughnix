@@ -12,7 +12,15 @@
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
-    kernelModules = [ "snd-seq" "snd-rawmidi" ];
+    kernelModules = [
+      "snd-seq"
+      "snd-rawmidi"
+      "xhci_hcd"
+    ];
+    kernelParams = [
+      "usbcore.autosuspend=-1"
+      "usbcore.quirks=0763:0015:iou"
+    ];
     # kernelPackages = pkgs.linuxKernel.packages.linux_6_1;
   };
 
@@ -359,6 +367,10 @@
 
   time.timeZone = "America/Vancouver";
   i18n.defaultLocale = "en_CA.UTF-8";
-
-  system.stateVersion = "23.11";
+  system = {
+    stateVersion = "23.11";
+    nixos = {
+      tags = [ "fixing-hammer88" ];
+    };
+  };
 }

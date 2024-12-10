@@ -1021,6 +1021,7 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
     source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
     export QT_QPA_PLATFORM="wayland"
     '';
+
       localVariables = {
         EDITOR = "emacsclient --create-frame --alternate-editor=vim";
         INPUT_METHOD = "fcitx";
@@ -1030,6 +1031,7 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
         XIM_SERVERS = "fcitx";
         WXSUPPRESS_SIZER_FLAGS_CHECK = "1";
       };
+
       shellAliases = {
         c = "clear";
         g = "git";
@@ -1040,9 +1042,9 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
         i3 = "exec ${pkgs.i3-gaps}/bin/i3";
       };
       loginExtra = ''
-#if [ "$(tty)" = "/dev/tty1" ];then
-    exec Hyprland
-#fi
+      if [ "$(tty)" = "/dev/tty1" ];then
+          exec Hyprland
+      fi
     '';
     };
 
