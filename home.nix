@@ -7,6 +7,7 @@
     stateVersion = "23.11";
     
     packages = with pkgs; [
+      alsa-utils
       alsa-scarlett-gui
       ardour
       audacity
@@ -22,10 +23,12 @@
       cowsay
       croc
       curl
+      cryptsetup
       dmenu
       electrum
       ffmpeg
       fira-code
+      fluidsynth
       fswebcam
       ghostscript
       git
@@ -36,11 +39,12 @@
       helvum
       imagemagick
       inkscape
-      # kdenlive
+      kdenlive
       kicad
       krita
       light
       libnotify
+      miniserve
       monero-gui
       monero-cli
       mpc-cli
@@ -63,12 +67,14 @@
       poetry
       python3
       python312Packages.jedi
+      qjackctl
       qsynth
       qpwgraph
       rsync
       rust-analyzer
       rustfmt
       slack
+      simplex-chat-desktop
       sox
       swww
       telegram-desktop
@@ -77,7 +83,6 @@
       # typescript-language-server
       typescript
       tor-browser
-      veracrypt
       vesktop
       vim
       vscode-langservers-extracted
@@ -1014,6 +1019,7 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
     export EXTRA_LDFLAGS="-L/lib -L${pkgs.linuxPackages.nvidia_x11}/lib"
     export EXTRA_CCFLAGS="-I/usr/include"
     source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+    export QT_QPA_PLATFORM="wayland"
     '';
       localVariables = {
         EDITOR = "emacsclient --create-frame --alternate-editor=vim";
@@ -1035,7 +1041,7 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
       };
       loginExtra = ''
 #if [ "$(tty)" = "/dev/tty1" ];then
-#  exec Hyprland
+    exec Hyprland
 #fi
     '';
     };
@@ -1212,6 +1218,8 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
         "fcitx5-remote -r"
         "emacs"
         "firefox"
+        "qsynth"
+        "qpwgraph"
       ];
       env = [
         "LIBVA_DRIVER_NAME,nvidia"
@@ -1235,6 +1243,8 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
         "workspace 3, ^(.*vesktop.*)$"
         "workspace 3, ^(.*fluffychat.*)$"
         "workspace 3, ^(.*element-desktop.*)$"
+        "workspace 4, ^(.*qsynth.*)$"
+        "workspace 4, ^(.*qpwgraph.*)$"
         "workspace 5, ^(.*Monero.*)$"
         "workspace 5, ^(.*electrum.*)$"
         "pseudo,fcitx"

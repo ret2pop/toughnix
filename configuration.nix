@@ -12,13 +12,15 @@
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
+    kernelModules = [ "snd-seq" "snd-rawmidi" ];
+    # kernelPackages = pkgs.linuxKernel.packages.linux_6_1;
   };
 
   networking = {
     hostName = "continuity";
     networkmanager.enable = true;
     firewall = {
-      allowedTCPPorts = [ 80 443 6600 8000 18080 37889 11434 7777 ];
+      allowedTCPPorts = [ 22 80 443 6600 8000 8080 18080 37889 11434 7777 ];
     };
   };
 
@@ -47,6 +49,7 @@
       open = false;
       package = config.boot.kernelPackages.nvidiaPackages.stable;
     };
+
     pulseaudio.enable = false;
   };
 
@@ -90,6 +93,25 @@
       pulse.enable = true;
       jack.enable = true;
       wireplumber.enable = true;
+      extraConfig.pipewire-pulse."92-low-latency" = {
+        "context.properties" = [
+          {
+            name = "libpipewire-module-protocol-pulse";
+            args = { };
+          }
+        ];
+        "pulse.properties" = {
+          "pulse.min.req" = "32/48000";
+          "pulse.default.req" = "32/48000";
+          "pulse.max.req" = "32/48000";
+          "pulse.min.quantum" = "32/48000";
+          "pulse.max.quantum" = "32/48000";
+        };
+        "stream.properties" = {
+          "node.latency" = "32/48000";
+          "resample.quality" = 1;
+        };
+      };
     };
 
     kanata = {
@@ -163,7 +185,8 @@
     openssh = {
       enable = true;
       settings = {
-        PasswordAuthentication = false;
+        PasswordAuthentication = true;
+        AllowUsers = [ "preston" ];
         PermitRootLogin = "no";
         KbdInteractiveAuthentication = false;
       };
@@ -246,6 +269,16 @@
   };
 
   programs = {
+    # nix-autobahn.enable = true;
+    nix-ld.enable = true;
+
+    nix-ld.libraries = with pkgs; [
+
+      # Add any missing dynamic libraries for unpackaged programs
+
+      # here, NOT in environment.systemPackages
+
+    ];
     zsh.enable = true;
     light.enable = true;
     ssh.enableAskPassword = false;
@@ -265,6 +298,10 @@
     #   defaults.email = "ret2pop@gmail.com";
     # };
 
+    pam.loginLimits = [
+      { domain = "*"; item = "nofile"; type = "-"; value = "32768"; }
+      { domain = "*"; item = "memlock"; type = "-"; value = "32768"; }
+    ];
     rtkit.enable = true;
 
     lockKernelModules = true;
@@ -290,27 +327,29 @@
     linuxPackages.nvidia_x11
   ];
 
-  users.users = {
-    root.openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINSshvS1N/42pH9Unp3Zj4gjqs9BXoin99oaFWYHXZDJ preston@preston-arch"
-    ];
-
-    git = {
-      isSystemUser = true;
-      home = "/srv/git";
-      shell = "${pkgs.git}/bin/git-shell";
-      openssh.authorizedKeys.keys = [
+  users = {
+    users = {
+      root.openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINSshvS1N/42pH9Unp3Zj4gjqs9BXoin99oaFWYHXZDJ preston@preston-arch"
       ];
-    };
 
-    preston = {
-      isNormalUser = true;
-      description = "Preston Pan";
-      extraGroups = [ "networkmanager" "wheel" "video" "docker" ];
-      shell = pkgs.zsh;
-      packages = [
-      ];
+      git = {
+        isSystemUser = true;
+        home = "/srv/git";
+        shell = "${pkgs.git}/bin/git-shell";
+        openssh.authorizedKeys.keys = [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINSshvS1N/42pH9Unp3Zj4gjqs9BXoin99oaFWYHXZDJ preston@preston-arch"
+        ];
+      };
+
+      preston = {
+        isNormalUser = true;
+        description = "Preston Pan";
+        extraGroups = [ "networkmanager" "wheel" "video" "docker" "jackaudio" ];
+        shell = pkgs.zsh;
+        packages = [
+        ];
+      };
     };
   };
 

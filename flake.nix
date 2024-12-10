@@ -27,7 +27,7 @@
         system = "x86_64-linux";
         specialArgs = attrs;
         modules = [
-          { nixpkgs.overlays = [ nur.overlay ]; }
+          { nixpkgs.overlays = [ nur.overlays.default ]; }
           ({ pkgs, ... }:
             let
               nur-no-pkgs = import nur {
@@ -57,7 +57,7 @@
         system = "x86_64-linux";
         specialArgs = attrs;
         modules = [
-          { nixpkgs.overlays = [ nur.overlay ]; }
+          { nixpkgs.overlays = [ nur.overlays.default ]; }
           ({ pkgs, ... }:
             let
               nur-no-pkgs = import nur {
