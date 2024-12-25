@@ -7,28 +7,20 @@
     stateVersion = "23.11";
     
     packages = with pkgs; [
+      acpilight
       alsa-utils
-      alsa-scarlett-gui
-      ardour
-      audacity
       autobuild
-      bisq-desktop
+      bitcoin
       bear
-      blender
       bun
       cargo
       clang
       clang-tools
-      cmatrix
-      cowsay
-      croc
       curl
-      cryptsetup
-      dmenu
       electrum
       ffmpeg
       fira-code
-      fluidsynth
+      font-awesome_6
       fswebcam
       ghostscript
       git
@@ -39,10 +31,8 @@
       helvum
       imagemagick
       inkscape
-      kdenlive
       kicad
       krita
-      light
       libnotify
       miniserve
       monero-gui
@@ -50,11 +40,11 @@
       mpc-cli
       mu
       nixd
+      nil
       nixfmt-rfc-style
       noto-fonts
       noto-fonts-cjk
-      obs-cli
-      obs-studio
+      noto-fonts-emoji
       octaveFull
       openscad
       openscad-lsp
@@ -62,38 +52,33 @@
       pavucontrol
       pfetch
       pinentry
-      pipes
-      podman-desktop
       poetry
       python3
       python312Packages.jedi
-      qjackctl
-      qsynth
-      qpwgraph
       rsync
       rust-analyzer
       rustfmt
-      slack
-      simplex-chat-desktop
       sox
       swww
-      telegram-desktop
       texliveFull
-      timeshift
-      # typescript-language-server
       typescript
       tor-browser
+      torsocks
       vesktop
       vim
       vscode-langservers-extracted
-      wget
       x11_ssh_askpass
       xdg-utils
-      signal-desktop
       (aspellWithDicts
         (dicts: with dicts; [ en en-computers en-science ]))
       (nerdfonts.override { fonts = [ "Iosevka" ]; })
-      (pass.withExtensions (ext: with ext; [ pass-otp pass-import pass-genphrase pass-update pass-tomb]))
+      (pass.withExtensions (ext: with ext; [
+        pass-otp
+        pass-import
+        pass-genphrase
+        pass-update
+        pass-tomb
+      ]))
     ];
   };
 
@@ -107,7 +92,7 @@
       font = "Fira Code 10";
       defaultTimeout = 3000;
       extraConfig = ''
-on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
+on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
 '';
     };
 
@@ -216,8 +201,8 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
         r = "gammastep -O 3000";
         ns = "nix-shell";
         n = "nix";
-        nfu = "cd /etc/nixos/ && sudo nix flake update";
-        rb = "sudo nixos-rebuild switch";
+        nfu = "cd /etc/nixos/ && doas nix flake update";
+        rb = "doas nixos-rebuild switch";
       };
     };
 
@@ -745,8 +730,7 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
       * {
           border: none;
           border-radius: 0px;
-          /*font-family: Fira Code, Iosevka Nerd Font, Noto Sans CJK;*/
-          font-family: Iosevka, FontAwesome, Noto Sans CJK;
+          font-family: Iosevka Nerd Font, FontAwesome, Noto Sans CJK;
           font-size: 14px;
           font-style: normal;
           min-height: 0;
@@ -996,6 +980,7 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
 
           output = [
             "HDMI-A-1"
+            "eDP-1"
             "DP-2"
             "DP-3"
           ];
@@ -1004,8 +989,13 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
           modules-center = [ "hyprland/window" ];
           modules-right = [ "battery" "clock" ];
 
+          battery = {
+            format = "{icon}  {capacity}%";
+            format-icons = ["" "" "" "" "" ];
+          };
+
           clock = {
-            format = "{:%a %d, %b %H:%M}";
+            format = "⏰ {:%a %d, %b %H:%M}";
           };
         };
       };
@@ -1014,9 +1004,7 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
     zsh = {
       enable = true;
       initExtra = ''
-    export CUDA_PATH=${pkgs.cudatoolkit}
-    # export LD_LIBRARY_PATH=${pkgs.linuxPackages.nvidia_x11}/lib
-    export EXTRA_LDFLAGS="-L/lib -L${pkgs.linuxPackages.nvidia_x11}/lib"
+    umask 0077
     export EXTRA_CCFLAGS="-I/usr/include"
     source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
     export QT_QPA_PLATFORM="wayland"
@@ -1037,8 +1025,8 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
         g = "git";
         v = "vim";
         py = "python3";
-        rb = "sudo nixos-rebuild switch";
-        nfu = "cd /etc/nixos/ && sudo nix flake update";
+        rb = "doas nixos-rebuild switch";
+        nfu = "cd /etc/nixos/ && doas nix flake update";
         i3 = "exec ${pkgs.i3-gaps}/bin/i3";
       };
       loginExtra = ''
@@ -1072,6 +1060,7 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
         epkgs.emmet-mode
         epkgs.emms
         epkgs.enwc
+        epkgs.unicode-fonts
         epkgs.evil
         epkgs.evil-collection
         epkgs.evil-commentary
@@ -1185,14 +1174,16 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
     git = {
       enable = true;
       userName = "Preston Pan";
-      userEmail = "preston@nullring.xyz";
+      userEmail = "ret2pop@gmail.com";
       signing = {
-        key = "2B749D1FB976E81613858E490290504780B30E20";
+        key = "EF4256FD266616F6D4FB82475B1AF1DE1FA6FEF2";
         signByDefault = true;
       };
+
       extraConfig = {
         init.defaultBranch = "main";
       };
+
       aliases = {
         co = "checkout";
         c = "commit";
@@ -1220,8 +1211,6 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
         "fcitx5-remote -r"
         "emacs"
         "firefox"
-        "qsynth"
-        "qpwgraph"
       ];
       env = [
         "LIBVA_DRIVER_NAME,nvidia"
@@ -1239,28 +1228,30 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
       windowrule = [
         "workspace 1, ^(.*emacs.*)$"
         "workspace 2, ^(.*firefox.*)$"
+        "workspace 2, ^(.*Tor Browser.*)$"
         "workspace 2, ^(.*Chromium-browser.*)$"
         "workspace 2, ^(.*chromium.*)$"
         "workspace 3, ^(.*discord.*)$"
         "workspace 3, ^(.*vesktop.*)$"
         "workspace 3, ^(.*fluffychat.*)$"
         "workspace 3, ^(.*element-desktop.*)$"
-        "workspace 4, ^(.*qsynth.*)$"
         "workspace 4, ^(.*qpwgraph.*)$"
         "workspace 5, ^(.*Monero.*)$"
+        "workspace 5, ^(.*org\.bitcoin\..*)$"
+        "workspace 5, ^(.*Bitcoin Core - preston.*)$"
+        "workspace 5, ^(.*org\.getmonero\..*)$"
+        "workspace 5, ^(.*Monero - preston.*)$"
         "workspace 5, ^(.*electrum.*)$"
         "pseudo,fcitx"
       ];
       bind = [
         "$mod, F, exec, firefox"
-        "$mod, W, exec, chromium-browser --enable-features=UseOzonePlatform --ozone-platform=wayland"
+        "$mod, T, exec, tor-browser"
         "$mod, Return, exec, kitty"
         "$mod, E, exec, emacs"
-        "$mod, B, exec, electrum"
-        "$mod, T, exec, telegram-desktop"
+        "$mod, B, exec, bitcoin-qt"
         "$mod, M, exec, monero-wallet-gui"
         "$mod, V, exec, vesktop"
-        "$mod, C, exec, fluffychat"
         "$mod, D, exec, wofi --show run"
         "$mod, P, exec, bash ${scripts}/powermenu.sh"
         "$mod, Q, killactive"
@@ -1303,8 +1294,8 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
         ", XF86AudioLowerVolume, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%-"
         ", XF86AudioNext, exec, mpc next"
         ", XF86AudioPrev, exec, mpc prev"
-        ", XF86MonBrightnessUp , exec, light -A 10"
-        ", XF86MonBrightnessDown, exec, light -U 10"
+        ", XF86MonBrightnessUp , exec, xbacklight -inc 10"
+        ", XF86MonBrightnessDown, exec, xbacklight -dec 10"
       ];
       decoration = {
         blur = {
@@ -1355,20 +1346,6 @@ on-notify=exec mpv /home/preston/sounds/notification.mp3 --no-config
   };
 
   fonts.fontconfig.enable = true;
-  # xsession = {
-  #   enable = true;
-  #   windowManager.i3 = {
-  #     enable = true;
-  #     package = pkgs.i3-gaps;
-  #     config = {
-  #       modifier = "Mod4";
-  #       gaps = {
-  #         inner = 10;
-  #         outer = 5;
-  #       };
-  #     };
-  #   };
-  # };
-  nixpkgs.config.cudaSupport = true;
+  nixpkgs.config.cudaSupport = false;
 }
 

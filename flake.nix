@@ -15,13 +15,17 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.4.1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nur.url = "github:nix-community/NUR";
     sops-nix.url = "github:Mic92/sops-nix";
     scripts.url = "github:ret2pop/scripts";
     wallpapers.url = "github:ret2pop/wallpapers";
   };
 
-  outputs = { nixpkgs, home-manager, nur, disko, ... }@attrs: {
+  outputs = { nixpkgs, home-manager, nur, disko, lanzaboote, ... }@attrs: {
     nixosConfigurations = {
       live = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -35,9 +39,9 @@
                 nurpkgs = import nixpkgs { system = "x86_64-linux"; };
               };
             in
-            {
-              imports = [ ];
-            })
+              {
+                imports = [ ];
+              })
           (nixpkgs + "/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix")
           ./configuration.nix
           disko.nixosModules.disko
@@ -53,7 +57,7 @@
         ];
       };
 
-      continuity = nixpkgs.lib.nixosSystem {
+      continuity-dell = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = attrs;
         modules = [
@@ -65,9 +69,10 @@
                 nurpkgs = import nixpkgs { system = "x86_64-linux"; };
               };
             in
-            {
-              imports = [ ];
-            })
+              {
+                imports = [ ];
+              })
+          lanzaboote.nixosModules.lanzaboote
           ./configuration.nix
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager
