@@ -188,7 +188,8 @@
 
     jitterentropy-rngd.enable = true;
     resolved.dnssec = true;
-    usbguard.enable = true;
+    # usbguard.enable = true;
+    usbguard.enable = false;
     dbus = {
       apparmor = "enabled";
     };
@@ -367,7 +368,7 @@
       preston = {
         isNormalUser = true;
         description = "Preston Pan";
-        extraGroups = [ "networkmanager" "wheel" "video" "docker" "jackaudio" "tss" ];
+        extraGroups = [ "networkmanager" "wheel" "video" "docker" "jackaudio" "tss" "dialout" ];
         shell = pkgs.zsh;
         packages = [
         ];

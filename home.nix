@@ -22,6 +22,7 @@
       fira-code
       font-awesome_6
       fswebcam
+      gdb
       ghostscript
       git
       gnumake
@@ -31,7 +32,7 @@
       helvum
       imagemagick
       inkscape
-      kicad
+      # kicad
       krita
       libnotify
       miniserve
@@ -49,6 +50,7 @@
       openscad
       openscad-lsp
       passExtensions.pass-otp
+      pandoc
       pavucontrol
       pfetch
       pinentry
@@ -58,6 +60,7 @@
       rsync
       rust-analyzer
       rustfmt
+      solc
       sox
       swww
       texliveFull
@@ -162,48 +165,6 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
         "oicakdoenlelpjnkoljnaakdofplkgnd" # tree style tabs
         "nkbihfbeogaeaoehlefnkodbefgpgknn" # metamask
       ];
-    };
-
-    nushell = {
-      enable = true;
-      extraConfig = ''
-      let carapace_completer = {|spans|
-      carapace $spans.0 nushell $spans | from json
-                               }
-      $env.config = {
-       show_banner: false,
-       completions: {
-       case_sensitive: false # case-sensitive completions
-       quick: true    # set to false to prevent auto-selecting completions
-       partial: true    # set to false to prevent partial filling of the prompt
-       algorithm: "fuzzy"    # prefix or fuzzy
-       external: {
-       # set to false to prevent nushell looking into $env.PATH to find more suggestions
-           enable: true 
-       # set to lower can improve completion performance at the cost of omitting some options
-           max_results: 100 
-           completer: $carapace_completer # check 'carapace_completer' 
-       }
-       }
-                               } 
-      $env.PATH = ($env.PATH | 
-      split row (char esep) |
-      prepend /home/myuser/.apps |
-      append /usr/bin/env
-                    )
-    '';
-
-      shellAliases = {
-        c = "clear";
-        g = "git";
-        v = "vim";
-        h = "Hyprland";
-        r = "gammastep -O 3000";
-        ns = "nix-shell";
-        n = "nix";
-        nfu = "cd /etc/nixos/ && doas nix flake update";
-        rb = "doas nixos-rebuild switch";
-      };
     };
 
     mpv = {
@@ -1026,7 +987,8 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
         v = "vim";
         py = "python3";
         rb = "doas nixos-rebuild switch";
-        nfu = "cd /etc/nixos/ && doas nix flake update";
+        nfu = "cd ~/src/hyprnixmacs && git add . && git commit -m \"new flake lock\" && cd /etc/nixos/ && doas nix flake update";
+        sai = "eval \"$(ssh-agent -s)\" && ssh-add ~/.ssh/id_ed25519 && ssh-add -l";
         i3 = "exec ${pkgs.i3-gaps}/bin/i3";
       };
       loginExtra = ''
@@ -1052,6 +1014,7 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
         epkgs.counsel
         epkgs.dashboard
         epkgs.doom-modeline
+        epkgs.irony-eldoc
         epkgs.elfeed
         epkgs.elfeed-org
         epkgs.ellama
@@ -1090,7 +1053,14 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
         epkgs.pdf-tools
         epkgs.pinentry
         epkgs.projectile
+        epkgs.platformio-mode
         epkgs.rustic
+
+        epkgs.flycheck
+        epkgs.solidity-mode
+        epkgs.solidity-flycheck
+        epkgs.company-solidity
+
         epkgs.scad-mode
         epkgs.simple-httpd
         epkgs.sudo-edit
@@ -1176,7 +1146,7 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
       userName = "Preston Pan";
       userEmail = "ret2pop@gmail.com";
       signing = {
-        key = "EF4256FD266616F6D4FB82475B1AF1DE1FA6FEF2";
+        key = "AEC273BF75B6F54D81343A1AC1FE6CED393AE6C1";
         signByDefault = true;
       };
 
