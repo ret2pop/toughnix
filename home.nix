@@ -72,6 +72,9 @@
       vscode-langservers-extracted
       x11_ssh_askpass
       xdg-utils
+      nodejs
+      yarn
+      jq
       (aspellWithDicts
         (dicts: with dicts; [ en en-computers en-science ]))
       (nerdfonts.override { fonts = [ "Iosevka" ]; })
@@ -988,6 +991,8 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
         py = "python3";
         rb = "doas nixos-rebuild switch";
         nfu = "cd ~/src/hyprnixmacs && git add . && git commit -m \"new flake lock\" && cd /etc/nixos/ && doas nix flake update";
+        usite
+        = "cd ~/src/publish-org-roam-ui && bash local.sh && rm -rf ~/website_html/graph_view; cp -r ~/src/publish-org-roam-ui/out ~/website_html/graph_view && rsync -azvP --chmod=\"Du=rwx,Dg=rx,Do=rx,Fu=rw,Fg=r,Fo=r\" ~/website_html/ root@nullring.xyz:/usr/share/nginx/ret2pop/";
         sai = "eval \"$(ssh-agent -s)\" && ssh-add ~/.ssh/id_ed25519 && ssh-add -l";
         i3 = "exec ${pkgs.i3-gaps}/bin/i3";
       };
@@ -1084,7 +1089,7 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
     mbsync = {
       enable = true;
       extraConfig = ''
-      IMAPAccount prestonpan
+      IMAPAccount ret2pop
       Host imap.gmail.com
       User ret2pop@gmail.com
       PassCmd "pass Mail"
@@ -1093,17 +1098,17 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
       AuthMechs *
       CertificateFile /etc/ssl/certs/ca-certificates.crt
 
-      IMAPStore prestonpan-remote
-      Account prestonpan
+      IMAPStore ret2pop-remote
+      Account ret2pop
 
-      MaildirStore prestonpan-local
+      MaildirStore ret2pop-local
       Path ~/email/ret2pop/
       Inbox ~/email/ret2pop/INBOX
       SubFolders Verbatim
 
-      Channel prestonpan
-      Far :prestonpan-remote:
-      Near :prestonpan-local:
+      Channel ret2pop 
+      Far :ret2pop-remote:
+      Near :ret2pop-local:
       Patterns *
       Create Near
       Sync All
