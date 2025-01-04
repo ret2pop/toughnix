@@ -44,7 +44,7 @@
       nil
       nixfmt-rfc-style
       noto-fonts
-      noto-fonts-cjk
+      noto-fonts-cjk-sans
       noto-fonts-emoji
       octaveFull
       openscad
@@ -1094,7 +1094,7 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
       User ret2pop@gmail.com
       PassCmd "pass Mail"
       Port 993
-      SSLType IMAPS
+      TLSType IMAPS
       AuthMechs *
       CertificateFile /etc/ssl/certs/ca-certificates.crt
 
@@ -1279,8 +1279,6 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
           passes = 2;
         };
         rounding = 5;
-        shadow_offset = "0 5";
-        "col.shadow" = "rgba(00000099)";
       };
       input = {
         kb_options = "caps:swapescape";

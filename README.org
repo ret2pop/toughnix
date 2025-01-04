@@ -12,7 +12,7 @@ much less cruft.
 Simply clone the contents of this repository to ~/etc/nixos/~ and run ~sudo nixos-rebuild switch~.
 Note that afterwards you will need a ~$HOME/.password-store~ in user ~preston~ which has
 an entry named ~Mail~, as well as a ~~/org/website/~ directory made by cloning my
-[[https://github.com/ret2pop/ret2pop-website][ret2pop website]] repository to that location. Here are all the commands:
+[[https://git.nullring.xyz/ret2pop-website.git/about/][ret2pop website]] repository to that location. Here are all the commands:
 #+begin_src shell
   # run as root
   # create backup of hardware-configuration.nix and put it back there after
@@ -21,7 +21,7 @@ an entry named ~Mail~, as well as a ~~/org/website/~ directory made by cloning m
   nixos-rebuild switch
   su preston
   # copy over gpg and ssh keys
-  git clone root@nullring.xyz:/var/git/password-store.git ~/.password-store/
+  git clone root@nullring.xyz:/var/git/passwords.git ~/.password-store/
   mkdir ~/org
   git clone https://github.com/ret2pop/ret2pop-website ~/org/website/
   # get music and put it in ~/music

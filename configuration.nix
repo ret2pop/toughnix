@@ -172,7 +172,7 @@
       powerOnBoot = true;
     };
 
-    opengl = {
+    graphics = {
       enable = true;
     };
 
