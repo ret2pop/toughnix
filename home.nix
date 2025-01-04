@@ -1077,6 +1077,7 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
         epkgs.typescript-mode
         epkgs.use-package
         epkgs.vterm
+        epkgs.writeroom-mode
         epkgs.web-mode
         epkgs.websocket
         epkgs.which-key
@@ -1088,6 +1089,7 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
 
     mbsync = {
       enable = true;
+      # CHANGEME
       extraConfig = ''
       IMAPAccount ret2pop
       Host imap.gmail.com
@@ -1120,6 +1122,7 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
     msmtp = {
       enable = true;
       extraConfig = ''
+      # CHANGEME
       # Set default values for all following accounts.
       defaults
       auth           on
@@ -1148,9 +1151,11 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
 
     git = {
       enable = true;
+      # CHANGEME name and email
       userName = "Preston Pan";
       userEmail = "ret2pop@gmail.com";
       signing = {
+        # CHANGEME GIT SIGNING KEY
         key = "AEC273BF75B6F54D81343A1AC1FE6CED393AE6C1";
         signByDefault = true;
       };
