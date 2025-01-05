@@ -18,7 +18,6 @@ git clone git@nullring.xyz:/var/git/publish-org-roam-ui ~/src
 
 cd /etc/nixos
 sudo nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update
-read -p "press enter to continue with installing after making changes with vim:"
 sudo nixos-rebuild switch
 
 echo "Installlation done! Rebooting..."
