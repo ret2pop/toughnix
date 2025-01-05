@@ -18,7 +18,7 @@ git clone git@nullring.xyz:/var/git/publish-org-roam-ui ~/src
 
 cd /etc/nixos
 sudo nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update
-sudo nixos-rebuild switch
+sudo nixos-rebuild switch --flake .#continuity-dell
 
 echo "Installlation done! Rebooting..."
 sleep 3
