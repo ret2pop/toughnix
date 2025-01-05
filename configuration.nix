@@ -44,14 +44,16 @@
   };
 
   boot = {
+    # CHANGEME delete this initrd entry
     initrd.luks.devices."luks-30d6b69f-1ec0-4111-b5d3-c0138d485a49".device = "/dev/disk/by-uuid/30d6b69f-1ec0-4111-b5d3-c0138d485a49";
-
+    # CHANGEME delete lanzaboote entry for now
     lanzaboote = {
       enable = true;
       pkiBundle = "/etc/secureboot";
     };
 
     loader = {
+      # CHANGEME to true
       systemd-boot.enable = lib.mkForce false;
       efi.canTouchEfiVariables = true;
     };
@@ -234,6 +236,7 @@
         options = "caps:escape";
       };
 
+      # CHANGEME if using nvidia
       videoDrivers = [];
       enable = true;
     };
@@ -378,6 +381,7 @@
 
   nix.settings.experimental-features = "nix-command flakes";
 
+  # CHANGEME timezone
   time.timeZone = "America/Vancouver";
   i18n.defaultLocale = "en_CA.UTF-8";
   system = {

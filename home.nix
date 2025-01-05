@@ -7,11 +7,12 @@
     stateVersion = "23.11";
     
     packages = with pkgs; [
+      # kicad
       acpilight
       alsa-utils
       autobuild
-      bitcoin
       bear
+      bitcoin
       bun
       cargo
       clang
@@ -32,25 +33,26 @@
       helvum
       imagemagick
       inkscape
-      # kicad
+      jq
       krita
       libnotify
       miniserve
-      monero-gui
       monero-cli
+      monero-gui
       mpc-cli
       mu
-      nixd
       nil
+      nixd
       nixfmt-rfc-style
+      nodejs
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-emoji
       octaveFull
       openscad
       openscad-lsp
-      passExtensions.pass-otp
       pandoc
+      passExtensions.pass-otp
       pavucontrol
       pfetch
       pinentry
@@ -64,17 +66,15 @@
       sox
       swww
       texliveFull
-      typescript
       tor-browser
       torsocks
+      typescript
       vesktop
       vim
       vscode-langservers-extracted
       x11_ssh_askpass
       xdg-utils
-      nodejs
       yarn
-      jq
       (aspellWithDicts
         (dicts: with dicts; [ en en-computers en-science ]))
       (nerdfonts.override { fonts = [ "Iosevka" ]; })
