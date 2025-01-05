@@ -387,7 +387,7 @@
   system = {
     stateVersion = "24.11";
     nixos = {
-      tags = [ "fixing-hammer88" ];
+      tags = [ "continuity-2.0" ];
     };
   };
 }

@@ -1089,7 +1089,7 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
 
     mbsync = {
       enable = true;
-      # CHANGEME
+      # CHANGEME different email server and account
       extraConfig = ''
       IMAPAccount ret2pop
       Host imap.gmail.com
@@ -1121,8 +1121,8 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
 
     msmtp = {
       enable = true;
+      # CHANGEME different email server and account
       extraConfig = ''
-      # CHANGEME
       # Set default values for all following accounts.
       defaults
       auth           on
