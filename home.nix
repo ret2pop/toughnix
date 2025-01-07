@@ -1,9 +1,42 @@
-{ pkgs, wallpapers, scripts, ... }:
+{ lib, config, pkgs, wallpapers, scripts, ... }:
+let
+  vars = import ./vars.nix;
+in
 {
   home = {
+    activation.startup-files = lib.mkAfter ''
+    if [ ! -d "${config.home.homeDirectory}/org/website/" ]; then
+      mkdir -p ${config.home.homeDirectory}/org/website/
+      ${pkgs.git}/bin/git clone https://git.nullring.xyz/ret2pop-website.git ${config.home.homeDirectory}/org/website/
+    fi
+
+    if [ ! -d "${config.home.homeDirectory}/src/publish-org-roam-ui" ]; then
+      mkdir -p ${config.home.homeDirectory}/src
+      ${pkgs.git}/bin/git clone https://git.nullring.xyz/publish-org-roam-ui.git ${config.home.homeDirectory}/src/publish-org-roam-ui
+    fi
+
+    if [ ! -d "${config.home.homeDirectory}/.password-store" ]; then
+      ${pkgs.git}/bin/git clone ${vars.passwordRepo} ${config.home.homeDirectory}/.password-store
+    fi
+
+    if [ ! -d "${config.home.homeDirectory}/email/ret2pop/" ]; then
+      mkdir -p ${config.home.homeDirectory}/email/ret2pop/
+    fi
+
+    if [ ! -d "${config.home.homeDirectory}/music" ]; then
+      mkdir -p ${config.home.homeDirectory}/music
+    fi
+
+    if [ ! -d "${config.home.homeDirectory}/sounds" ]; then
+      mkdir -p ${config.home.homeDirectory}/sounds
+    fi
+    touch ${config.home.homeDirectory}/org/agenda.org
+    touch ${config.home.homeDirectory}/org/notes.org
+    '';
+
     enableNixpkgsReleaseCheck = false;
-    username = "preston";
-    homeDirectory = "/home/preston";
+    username = vars.userName;
+    homeDirectory = "/home/${vars.userName}";
     stateVersion = "23.11";
     
     packages = with pkgs; [
@@ -98,7 +131,7 @@
       font = "Fira Code 10";
       defaultTimeout = 3000;
       extraConfig = ''
-on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
+on-notify=exec mpv /home/${vars.userName}/sounds/notification.wav --no-config --no-video
 '';
     };
 
@@ -131,11 +164,11 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
 
     mpd = {
       enable = true;
-      dbFile = "/home/preston/.config/mpd/db";
-      dataDir = "/home/preston/.config/mpd/";
+      dbFile = "/home/${vars.userName}/.config/mpd/db";
+      dataDir = "/home/${vars.userName}/.config/mpd/";
       network.port = 6600;
-      musicDirectory = "/home/preston/music";
-      playlistDirectory = "/home/preston/.config/mpd/playlists";
+      musicDirectory = "/home/${vars.userName}/music";
+      playlistDirectory = "/home/${vars.userName}/.config/mpd/playlists";
       network.listenAddress = "0.0.0.0";
       extraConfig = ''
       audio_output {
@@ -688,6 +721,7 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
         };
       };
     };
+
     waybar = {
       enable = true;
       style = ''
@@ -942,12 +976,7 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
           position = "top";
           height = 50;
 
-          output = [
-            "HDMI-A-1"
-            "eDP-1"
-            "DP-2"
-            "DP-3"
-          ];
+          output = vars.monitors;
 
           modules-left = [ "hyprland/workspaces" ];
           modules-center = [ "hyprland/window" ];
@@ -990,9 +1019,9 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
         v = "vim";
         py = "python3";
         rb = "doas nixos-rebuild switch";
-        nfu = "cd ~/src/hyprnixmacs && git add . && git commit -m \"new flake lock\" && cd /etc/nixos/ && doas nix flake update";
+        nfu = "cd ~/src/toughnix && git add . && git commit -m \"new flake lock\" && cd /etc/nixos/ && doas nix flake update";
         usite
-        = "cd ~/src/publish-org-roam-ui && bash local.sh && rm -rf ~/website_html/graph_view; cp -r ~/src/publish-org-roam-ui/out ~/website_html/graph_view && rsync -azvP --chmod=\"Du=rwx,Dg=rx,Do=rx,Fu=rw,Fg=r,Fo=r\" ~/website_html/ root@nullring.xyz:/usr/share/nginx/ret2pop/";
+        = "cd ~/src/publish-org-roam-ui && bash local.sh && rm -rf ~/website_html/graph_view; cp -r ~/src/publish-org-roam-ui/out ~/website_html/graph_view && rsync -azvP --chmod=\"Du=rwx,Dg=rx,Do=rx,Fu=rw,Fg=r,Fo=r\" ~/website_html/ ${vars.websiteLocation}";
         sai = "eval \"$(ssh-agent -s)\" && ssh-add ~/.ssh/id_ed25519 && ssh-add -l";
         i3 = "exec ${pkgs.i3-gaps}/bin/i3";
       };
@@ -1092,8 +1121,8 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
       # CHANGEME different email server and account
       extraConfig = ''
       IMAPAccount ret2pop
-      Host imap.gmail.com
-      User ret2pop@gmail.com
+      Host ${vars.imapsServer}
+      User ${vars.userName}
       PassCmd "pass Mail"
       Port 993
       TLSType IMAPS
@@ -1132,16 +1161,16 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
       logfile        ~/.msmtp.log
 
       # Gmail
-      account        preston
-      host           smtp.gmail.com
+      account        ${vars.userName}
+      host           ${vars.smtpsServer}
       port           587
-      from           ret2pop@gmail.com
-      user           ret2pop@gmail.com
+      from           ${vars.email}
+      user           ${vars.email}
       passwordeval   "pass Mail"
 
 
       # Set a default account
-      account default : preston
+      account default : ${vars.userName}
     '';
     };
 
@@ -1152,11 +1181,11 @@ on-notify=exec mpv /home/preston/sounds/notification.wav --no-config --no-video
     git = {
       enable = true;
       # CHANGEME name and email
-      userName = "Preston Pan";
-      userEmail = "ret2pop@gmail.com";
+      userName = vars.fullName;
+      userEmail = vars.email;
       signing = {
         # CHANGEME GIT SIGNING KEY
-        key = "AEC273BF75B6F54D81343A1AC1FE6CED393AE6C1";
+        key = vars.gpgKey;
         signByDefault = true;
       };
 

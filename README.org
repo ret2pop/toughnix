@@ -1,57 +1,52 @@
-* Introduction (Forked from HyprNixMacs)
-ToughNix is a configuration that centers around the usage of NixOS and Emacs.
-Note that at the time of writing, I use hyprland as my window manager, but that
-might change, and therefore hyprnixmacs may not be as accurate of a name. This
-entire configuration uses the [[https://github.com/catppuccin/catppuccin][catppuccin theme]].
-
+* Introduction
+ToughNix is a configuration that centers around the usage of NixOS and Emacs, with vim-centric
+keybindings. Note that at the time of writing, This entire configuration uses the [[https://github.com/catppuccin/catppuccin][catppuccin theme]].
 ** Why Not EXWM?
 Because emacs is blocking, and I want to use wayland because it's much better and there's
 much less cruft.
-
 * Installation
-Simply clone the contents of this repository to ~/etc/nixos/~ and run ~sudo nixos-rebuild switch~.
-Note that afterwards you will need a ~$HOME/.password-store~ in user ~preston~ which has
-an entry named ~Mail~, as well as a ~~/org/website/~ directory made by cloning my
-[[https://git.nullring.xyz/ret2pop-website.git/about/][ret2pop website]] repository to that location. Here are all the commands:
+Install NixOS, install git (and maybe vim) on your NixOS system, and then on your NixOS system, run:
 #+begin_src shell
-  # run as root
-  # create backup of hardware-configuration.nix and put it back there after
-  git clone https://github.com/ret2pop/hyprnixmacs.git /etc/nixos/
-  # put hardware-configuration.nix back in /etc/nixos
-  nixos-rebuild switch
-  su preston
-  # copy over gpg and ssh keys
-  git clone root@nullring.xyz:/var/git/passwords.git ~/.password-store/
-  mkdir ~/org
-  git clone https://github.com/ret2pop/ret2pop-website ~/org/website/
-  # get music and put it in ~/music
-#+end_src
-this process can be highly automated via [[https://github.com/nix-community/nixos-anywhere][NixOS Anywhere]]. Once you have my system with your own gpg and ssh keys,
-you can read the following section.
+  mkdir -p ~/src
+  git clone https://git.nullring.xyz/toughnix.git ~/src/
 
+  # Change any system variables that are hardware or person-dependent (do this before inital-deploy)
+  nano ~/src/toughnix/vars.nix
+  bash ~/src/toughnix/initial-deploy.sh
+
+  # remove the single CHANGEME line
+  nano ~/src/toughnix/configuration.nix
+
+  sudo nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update
+  sudo nixos-rebuild switch --flake .#continuity-dell
+#+end_src
+Note the line where we run ~nano~; during this period you should change any hardware or
+person-specific settings, and also alter ~configuration.nix~ more if you are using an encrypted drive.
+
+After this process, reboot and log into your user. You will immediately be taken into Hyprland,
+and Emacs and Firefox will autostart.
 * Usage
-Make sure that before you use the configuration, all the me-specific configuration is ripped out
-and replaced with yours. For instance, any mention of my name in ~configuration.nix~, ~home.nix~,
-the emacs config, or ~flake.nix~ should be replaced with mentions of your name, and stuff like server
-configurations for email or IRC should be replaced with your own configurations. The system by default
-is called ~continuity~. If you don't like this hostname, you can replace it in ~configuration.nix~ and
-~flake.nix~ with something else.
+On your first install, you will be greeted with firefox, as well as EMacs. If Waybar doesn't
+appear, run ~hyprctl monitors~ in a terminal (Windows key + Enter), and you should see the monitors
+listed. Then, edit ~/etc/nixos/vars.nix~ accordingly.
 ** Hyprland
 *** Wallpaper
-To change the wallpaper, change the ~swww add~ line to another wallpaper in my
+To change the wallpaper, change the ~swww add~ line in ~home.nix~ to another wallpaper in my
 [[https://github.com/ret2pop/wallpapers][wallpapers repository]].
 *** Keybindings
 **** Programs
+There are other programs too, but these are all you'll need to get started.
 #+begin_example
 Win + Return => kitty (Terminal)
 Win + e => emacs
 Win + w => firefox
-Win + v => discord
+Win + v => discord (vencord)
 Win + d => wofi (Run Launcher)
 Win + p => wofi (Powermenu)
 PrintScr => grim (screenshot; look for file in $HOME)
 #+end_example
 **** Commands
+These commands are inspired by ~vim~.
 #+begin_example
 Win + q => kill window
 Win + Shift + h => move window to left
@@ -63,9 +58,6 @@ Win + l => move window focus to right
 Win + k => move window focus up
 Win + j => move window focus down
 #+end_example
-** Initialization
-To get into a graphical hyprland environment, use type ~h~ into the tty after logging in. This will
-take you stright to the graphical session.
 ** Passwords
 Passwords will be managed by sops-nix in the future, but for now they are managed
 with the ~pass~ password manager. To initialize the password store, see
@@ -73,16 +65,14 @@ with the ~pass~ password manager. To initialize the password store, see
 #+begin_src shell
 pass add Mail
 #+end_src
-and enter your imaps and smtps password.
-** Git
-In ~home.nix~, change the signing key to your own gpg key. When you git commit, emacs will be your pinentry
-device, meaning you will enter the encryption password from emacs.
+and enter your imaps and smtps password (they should be the same in this setup).
 ** Email
 Email is done from within emacs with mu4e with ~SPC o m~. To initialize mail, run:
 #+begin_src shell
-  mbsync prestonpan # see mbsyncrc section of home.nix, change prestonpan to something else there
-                    # then run this command with that changed name.
-  mu init --maildir=~/email/mbsyncmail/
+  mbsync ret2pop    # see mbsyncrc section of home.nix, change ret2pop to something else there
+                    # then run this command with that changed name, if you really want.
+                    # Even though it uses my username, it works for everyone.
+  mu init --maildir=~/email/ret2pop/
   mu index
 #+end_src
 Note that a prerequisite is initializing ~pass~ and adding a ~Mail~ entry. Be sure to change the imaps
@@ -97,33 +87,30 @@ Optionally, go to user settings > Vencord > Themes > Online Themes. Then, instal
   @import url("https://catppuccin.github.io/discord/dist/catppuccin-mocha-pink.theme.css");
 #+end_src
 ** Waybar
-If the bar is not displaying, get your monitor name with ~hyprctl monitors~. Then, in the ~home.nix~ configuration
-replace ~LVDS-1~ with whatever your monitor name is that you want the bar to be displayed in. The battery percentage
-may not be displayed. If it isn't, then change ~BAT0~ with whatever you see when you run ~ls /sys/class/power_supply~,
-assuming you have a laptop with a battery. After that, it should work normally.
+If the bar is not displaying, get your monitor name with ~hyprctl monitors~. The battery percentage
+may not be displayed. If it isn't, then change ~BAT0~ with whatever you see when you run
+~ls /sys/class/power_supply~, assuming you have a laptop with a battery. After that, it should work
+normally.
 ** Music
-Replace all mention of ~/home/preston/~ in the mpd configuration of ~home.nix~ with whatever your home directory is.
-Place your music files in ~$HOME/music~ and run ~mpc update~, then ~mpc add /~. This should add all your music in
-~$HOME/music~ to the playlist to be read by the emacs program ~emms~.
+Place your music files in ~$HOME/music~ and run ~mpc update~, then ~mpc add /~.
+This should add all your music in ~$HOME/music~ to the playlist to be read by the emacs program ~emms~.
 ** Emacs
-This will be quite the large section as there will be much to explain. Just clone my entire website:
-#+begin_src shell
-  mkdir ~/org/
-  git clone https://github.com/ret2pop/ret2pop-website ~/org/website
-#+end_src
-/Then/ start emacs. On first initialization, make sure to run:
+On first initialization, make sure to run:
 #+begin_src emacs-lisp
   M-x pdf-tools-install
   M-x all-the-icons-install-fonts
   M-x nerd-icons-install-fonts 
 #+end_src
-then restart. This will make emacs look not ugly. Then, if you cloned my website, everything should work, although
-you should remove my journal entries and all my files in ~mindmap~ and replace them with your own.
+then restart. This will make emacs look not ugly. Also edit the very top of
+~~/org/website/config/emacs.org~, modify the parameters (email, full name, etc...) to your desired
+value.
 *** Keybindings
 These are the keybindings that I have set up for emacs. All the other keybindings are ones that are default
 to the packages installed or the builtin emacs keybindings. Note that I also use evil-mode, so you're going
-to have to know vim keybindings.
+to have to know vim keybindings. To get started with editing files, press space, and then
+press period.
 #+begin_example
+  SPC . find-file
   SPC o a org-agenda
   SPC c b counsel-bookmark
   SPC o c org-capture
@@ -165,18 +152,12 @@ In the config, replace the IRC configuration (server and name) with your own.
 Run ~ollama pull zephyr~ to get the zephyr ollama model.
 *** Mu4e
 After following the email advice from above, change my mail address and name to your own.
-*** Agenda
-Make a file ~$HOME/org/agenda.org~. From there, just google org-agenda.
-*** Ox-publish
-Steal the css stylesheet I use from the root of my website directory, and copy the layout of it.
-Honestly, I will finish explaining how I manage my website later because it's a little bit pain
-to explain in a concise manner.
 *** Elfeed
 Change my RSS feeds out in ~$HOME/org/website/config/elfeed.org~ with ones you want to read.
-*** Stem Mode
-[[https://github.com/ret2pop/stem][Stem]] is a programming language that I wrote, and in order for code blocks and syntax highlighting
-to work, you need to install [[https://github.com/ret2pop/stem-mode][stem-mode]]. Or, you can get rid of stem-mode in the emacs configuration.
-
+** Website
+I update my website with the command ~usite~ (in the terminal). This will work by default if you
+set your ~vars.nix~ correctly and you have access to the server you're sshing through with rsync.
 ** Postamble
-Once you've done all those things, you can call the system yours! You've successfully ripped out any part
-of the configuration that names me or any of the gpg or ssh keys that I own.
+Once you've done all those things, you can call the system yours! If you want to change anything
+about the system or fork it to remove any mention of me from the defaults, be my guest.
+If you want it to contain parts of my identity, that's also good.

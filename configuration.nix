@@ -1,5 +1,7 @@
 { config, pkgs, lib, inputs, ... }:
-
+let
+  vars = import ./vars.nix;
+in
 {
   imports =
     [
@@ -44,17 +46,16 @@
   };
 
   boot = {
-    # CHANGEME delete this initrd entry
+    # CHANGEME delete initrd entry
     initrd.luks.devices."luks-30d6b69f-1ec0-4111-b5d3-c0138d485a49".device = "/dev/disk/by-uuid/30d6b69f-1ec0-4111-b5d3-c0138d485a49";
-    # CHANGEME delete lanzaboote entry for now
+
     lanzaboote = {
-      enable = true;
+      enable = vars.secureBoot;
       pkiBundle = "/etc/secureboot";
     };
 
     loader = {
-      # CHANGEME to true
-      systemd-boot.enable = lib.mkForce false;
+      systemd-boot.enable = lib.mkForce (! vars.secureBoot);
       efi.canTouchEfiVariables = true;
     };
     
@@ -156,7 +157,7 @@
   };
 
   networking = {
-    hostName = "continuity-dell";
+    hostName = vars.hostName;
     networkmanager = {
       enable = true;
       # wifi.macAddress = "";
@@ -237,7 +238,7 @@
       };
 
       # CHANGEME if using nvidia
-      videoDrivers = [];
+      videoDrivers = vars.videoDrivers;
       enable = true;
     };
 
@@ -279,7 +280,7 @@
       enable = true;
       settings = {
         PasswordAuthentication = true;
-        AllowUsers = [ "preston" ];
+        AllowUsers = [ vars.userName ];
         PermitRootLogin = "no";
         KbdInteractiveAuthentication = false;
       };
@@ -338,7 +339,7 @@
     doas = {
       enable = true;
       extraRules = [{
-        users = [ "preston" ];
+        users = [ vars.userName ];
         keepEnv = true;
         persist = true;
       }];
@@ -362,28 +363,27 @@
     tree
   ];
 
-  users = {
-    users = {
-      root.openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINSshvS1N/42pH9Unp3Zj4gjqs9BXoin99oaFWYHXZDJ preston@preston-arch"
-      ];
+  
+  users.users = {
+    root.openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINSshvS1N/42pH9Unp3Zj4gjqs9BXoin99oaFWYHXZDJ preston@preston-arch"
+    ];
 
-      preston = {
-        isNormalUser = true;
-        description = "Preston Pan";
-        extraGroups = [ "networkmanager" "wheel" "video" "docker" "jackaudio" "tss" "dialout" ];
-        shell = pkgs.zsh;
-        packages = [
-        ];
-      };
+    "${vars.userName}" = {
+      isNormalUser = true;
+      description = vars.fullName;
+      extraGroups = [ "networkmanager" "wheel" "video" "docker" "jackaudio" "tss" "dialout" ];
+      shell = pkgs.zsh;
+      packages = [
+      ];
     };
   };
 
-  nix.settings.experimental-features = "nix-command flakes";
 
-  # CHANGEME timezone
-  time.timeZone = "America/Vancouver";
+  nix.settings.experimental-features = "nix-command flakes";
+  time.timeZone = vars.timeZone;
   i18n.defaultLocale = "en_CA.UTF-8";
+
   system = {
     stateVersion = "24.11";
     nixos = {
