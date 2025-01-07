@@ -5,7 +5,8 @@ keybindings. Note that at the time of writing, This entire configuration uses th
 Because emacs is blocking, and I want to use wayland because it's much better and there's
 much less cruft.
 * Installation
-Install NixOS, install git (and maybe vim) on your NixOS system, and then on your NixOS system, run:
+Install NixOS, get internet with ~nmtui~ or ethernet, install git (and maybe vim) on your NixOS system,
+and then on your NixOS system, run:
 #+begin_src shell
   mkdir -p ~/src
   git clone https://git.nullring.xyz/toughnix.git ~/src/

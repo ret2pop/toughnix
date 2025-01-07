@@ -37,7 +37,7 @@ in
     enableNixpkgsReleaseCheck = false;
     username = vars.userName;
     homeDirectory = "/home/${vars.userName}";
-    stateVersion = "23.11";
+    stateVersion = "24.11";
     
     packages = with pkgs; [
       # kicad
