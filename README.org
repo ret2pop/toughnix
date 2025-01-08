@@ -17,15 +17,19 @@ and then on your NixOS system, run:
 
   # remove the single CHANGEME line
   nano ~/src/toughnix/configuration.nix
-
-  sudo nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update
-  sudo nixos-rebuild switch --flake .#continuity-dell
+  bash ~/src/toughnix/stg2.sh
+  bash ~/src/toughnix/stg3.sh
 #+end_src
 Note the line where we run ~nano~; during this period you should change any hardware or
 person-specific settings, and also alter ~configuration.nix~ more if you are using an encrypted drive.
 
 After this process, reboot and log into your user. You will immediately be taken into Hyprland,
 and Emacs and Firefox will autostart.
+** Troubleshooting
+If you encounter an error in home-manager after building (can't start the home-manager process
+because it can't resolve so-and-so hostname), run ~doas nixos-rebuild switch~, and possibly
+wait a couple seconds before that. I've run into this issue before. Note that after building
+this system, my system uses ~doas~ instead of ~sudo~.
 * Usage
 On your first install, you will be greeted with firefox, as well as EMacs. If Waybar doesn't
 appear, run ~hyprctl monitors~ in a terminal (Windows key + Enter), and you should see the monitors
