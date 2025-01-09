@@ -30,31 +30,11 @@
     nixosConfigurations = {
       live = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = attrs;
         modules = [
-          { nixpkgs.overlays = [ nur.overlays.default ]; }
-          ({ pkgs, ... }:
-            let
-              nur-no-pkgs = import nur {
-                inherit pkgs;
-                nurpkgs = import nixpkgs { system = "x86_64-linux"; };
-              };
-            in
-              {
-                imports = [ ];
-              })
-          (nixpkgs + "/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix")
-          ./configuration.nix
-          disko.nixosModules.disko
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              extraSpecialArgs = attrs;
-              useUserPackages = true;
-              users.preston = import ./home.nix;
-            };
-          }
+          ({pkgs, modulesPath, ...}: {
+            imports = [(modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")];
+          })
+          ./iso.nix
         ];
       };
 
@@ -76,6 +56,7 @@
           lanzaboote.nixosModules.lanzaboote
           ./configuration.nix
           disko.nixosModules.disko
+          ./disk-config.nix
           home-manager.nixosModules.home-manager
           {
             home-manager = {

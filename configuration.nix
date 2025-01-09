@@ -234,7 +234,6 @@ in
         options = "caps:escape";
       };
 
-      # CHANGEME if using nvidia
       videoDrivers = vars.videoDrivers;
       enable = true;
     };

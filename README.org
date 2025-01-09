@@ -8,18 +8,12 @@ much less cruft.
 Install NixOS, get internet with ~nmtui~ or ethernet, install git (and maybe vim) on your NixOS system,
 and then on your NixOS system, run:
 #+begin_src shell
-  mkdir -p ~/src
-  git clone https://git.nullring.xyz/toughnix.git ~/src/
-
-  # Change any system variables that are hardware or person-dependent (do this before inital-deploy)
-  nano ~/src/toughnix/vars.nix
-  bash ~/src/toughnix/initial-deploy.sh
-
-  # remove the single CHANGEME line
-  nano ~/src/toughnix/configuration.nix
-  bash ~/src/toughnix/stg2.sh
-  bash ~/src/toughnix/stg3.sh
+  git clone https://git.nullring.xyz/toughnix.git
+  # change values as you see fit
+  vim toughnix/vars.nix
+  sudo nix run 'github:nix-community/disko/latest#disko-install' -- --flake 'toughnix#continuity-dell' --disk main /dev/[disk]
 #+end_src
+
 Note the line where we run ~nano~; during this period you should change any hardware or
 person-specific settings, and also alter ~configuration.nix~ more if you are using an encrypted drive.
 

@@ -44,6 +44,7 @@ in
       acpilight
       alsa-utils
       autobuild
+      bash-language-server
       bear
       bitcoin
       bun
@@ -63,6 +64,7 @@ in
       gnupg
       graphviz
       grim
+      gum
       helvum
       imagemagick
       inkscape
@@ -1118,7 +1120,6 @@ on-notify=exec mpv /home/${vars.userName}/sounds/notification.wav --no-config --
 
     mbsync = {
       enable = true;
-      # CHANGEME different email server and account
       extraConfig = ''
       IMAPAccount ret2pop
       Host ${vars.imapsServer}
@@ -1150,7 +1151,6 @@ on-notify=exec mpv /home/${vars.userName}/sounds/notification.wav --no-config --
 
     msmtp = {
       enable = true;
-      # CHANGEME different email server and account
       extraConfig = ''
       # Set default values for all following accounts.
       defaults
@@ -1180,11 +1180,9 @@ on-notify=exec mpv /home/${vars.userName}/sounds/notification.wav --no-config --
 
     git = {
       enable = true;
-      # CHANGEME name and email
       userName = vars.fullName;
       userEmail = vars.email;
       signing = {
-        # CHANGEME GIT SIGNING KEY
         key = vars.gpgKey;
         signByDefault = true;
       };
@@ -1356,4 +1354,3 @@ on-notify=exec mpv /home/${vars.userName}/sounds/notification.wav --no-config --
   fonts.fontconfig.enable = true;
   nixpkgs.config.cudaSupport = false;
 }
-
