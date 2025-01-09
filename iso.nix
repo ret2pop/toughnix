@@ -1,10 +1,5 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
-  imports =
-    [
-      ./hardware-configuration.nix
-    ];
-
   documentation = {
     enable = true;
     man.enable = true;
@@ -22,6 +17,7 @@
 
   networking = {
     hostName = "iso";
+    wireless.enable = lib.mkForce false;
     networkmanager = {
       enable = true;
       # wifi.macAddress = "";
@@ -88,8 +84,8 @@
       enable = true;
       settings = {
         PasswordAuthentication = true;
-        AllowUsers = [ ];
-        PermitRootLogin = "no";
+        AllowUsers = [ "nixos" ];
+        PermitRootLogin = "yes";
         KbdInteractiveAuthentication = false;
       };
     };
@@ -133,23 +129,22 @@ if [ "$(id -u)" -eq 0 ]; then
   echo "ERROR! $(basename "$0") should be run as a regular user"
   exit 1
 fi
+
 if [ ! -d "$HOME/toughnix/" ]; then
   cd $HOME
   git clone https://git.nullring.xyz/toughnix.git
 fi
 
+sudo nixos-generate-config
+sudo cp /etc/nixos/hardware-configuration.nix ~/toughnix/
+sudo chown -R nixos:users "$HOME/toughnix"
+cd "$HOME/toughnix"
+git add .
+cd "$HOME"
+vim "$HOME/toughnix/vars.nix"
 gum confirm  --default=false \
-"🔥 🔥 🔥 WARNING!!!! This will ERASE ALL DATA on the disk $TARGET_HOST. Are you sure you want to continue?"
-
-echo "Partitioning Disks"
-sudo nix run github:nix-community/disko \
-  --extra-experimental-features "nix-command flakes" \
-  --no-write-lock-file \
-  -- \
-  --mode zap_create_mount \
-  "$HOME/toughnix/disk-config.nix"
-
-sudo nixos-install --flake "$HOME/toughnix#.continuity-dell
+        "🔥 🔥 🔥 WARNING!!!! This will ERASE ALL DATA on the disk $DISK. Are you sure you want to continue?"
+sudo nix run 'github:nix-community/disko/latest#disko-install' -- --write-efi-boot-entries --flake './toughnix#continuity-dell' --disk main "$DISK"
           ''
         )
       ];
