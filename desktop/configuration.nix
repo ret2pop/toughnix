@@ -3,10 +3,7 @@ let
   vars = import ./vars.nix;
 in
 {
-  imports =
-    [
-      ./hardware-configuration.nix
-    ];
+  imports = [];
 
   documentation = {
     enable = true;

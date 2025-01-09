@@ -34,7 +34,7 @@
           ({pkgs, modulesPath, ...}: {
             imports = [(modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")];
           })
-          ./iso.nix
+          ./live/iso.nix
         ];
       };
 
@@ -54,16 +54,16 @@
                 imports = [ ];
               })
           lanzaboote.nixosModules.lanzaboote
-          ./configuration.nix
+          ./desktop/configuration.nix
           disko.nixosModules.disko
-          ./disk-config.nix
+          ./sda/disk-config.nix
           home-manager.nixosModules.home-manager
           {
             home-manager = {
               useGlobalPkgs = true;
               extraSpecialArgs = attrs;
               useUserPackages = true;
-              users.preston = import ./home.nix;
+              users.preston = import ./desktop/home.nix;
             };
           }
         ];

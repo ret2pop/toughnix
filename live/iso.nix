@@ -123,8 +123,10 @@
         curl
         gum
         (writeShellScriptBin "nix_installer"
-          ''#!/usr/bin/env bash
+          ''
+#!/usr/bin/env bash
 set -euo pipefail
+
 if [ "$(id -u)" -eq 0 ]; then
   echo "ERROR! $(basename "$0") should be run as a regular user"
   exit 1
@@ -134,19 +136,14 @@ if [ ! -d "$HOME/toughnix/" ]; then
   cd $HOME
   git clone https://git.nullring.xyz/toughnix.git
 fi
-
-sudo nixos-generate-config
-sudo cp /etc/nixos/hardware-configuration.nix ~/toughnix/
-sudo chown -R nixos:users "$HOME/toughnix"
 cd "$HOME/toughnix"
 git add .
 cd "$HOME"
-vim "$HOME/toughnix/vars.nix"
+vim "$HOME/toughnix/desktop/vars.nix"
 gum confirm  --default=false \
-        "🔥 🔥 🔥 WARNING!!!! This will ERASE ALL DATA on the disk $DISK. Are you sure you want to continue?"
-sudo nix run 'github:nix-community/disko/latest#disko-install' -- --write-efi-boot-entries --flake './toughnix#continuity-dell' --disk main "$DISK"
-          ''
-        )
+        "🔥 🔥 🔥 WARNING!!!! This will ERASE ALL DATA on the disk. Are you sure you want to continue?"
+sudo nix run 'github:nix-community/disko/latest#disko-install' -- --write-efi-boot-entries --flake './toughnix#continuity-dell'
+'')
       ];
     };
   };
