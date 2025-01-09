@@ -46,9 +46,6 @@ in
   };
 
   boot = {
-    # CHANGEME delete initrd entry
-    initrd.luks.devices."luks-30d6b69f-1ec0-4111-b5d3-c0138d485a49".device = "/dev/disk/by-uuid/30d6b69f-1ec0-4111-b5d3-c0138d485a49";
-
     lanzaboote = {
       enable = vars.secureBoot;
       pkiBundle = "/etc/secureboot";
@@ -287,11 +284,14 @@ in
     };
 
     # Misc.
-    udev.packages = with pkgs; [ 
-      platformio-core
-      platformio-core.udev
-      openocd
-    ];
+    udev = {
+      extraRules = '''';
+      packages = with pkgs; [ 
+        platformio-core
+        platformio-core.udev
+        openocd
+      ];
+    };
 
     printing.enable = true;
     udisks2.enable = true;

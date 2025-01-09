@@ -1045,28 +1045,31 @@ on-notify=exec mpv /home/${vars.userName}/sounds/notification.wav --no-config --
         epkgs.catppuccin-theme
         epkgs.chatgpt-shell
         epkgs.company
+        epkgs.company-solidity
         epkgs.counsel
         epkgs.dashboard
         epkgs.doom-modeline
-        epkgs.irony-eldoc
         epkgs.elfeed
         epkgs.elfeed-org
+        epkgs.elfeed-tube
+        epkgs.elfeed-tube-mpv
         epkgs.ellama
         epkgs.elpher
         epkgs.ement
         epkgs.emmet-mode
         epkgs.emms
         epkgs.enwc
-        epkgs.unicode-fonts
         epkgs.evil
         epkgs.evil-collection
         epkgs.evil-commentary
         epkgs.evil-org
         epkgs.f
+        epkgs.flycheck
         epkgs.general
         epkgs.gptel
         epkgs.gruvbox-theme
         epkgs.htmlize
+        epkgs.irony-eldoc
         epkgs.ivy
         epkgs.ivy-pass
         epkgs.latex-preview-pane
@@ -1086,17 +1089,13 @@ on-notify=exec mpv /home/${vars.userName}/sounds/notification.wav --no-config --
         epkgs.password-store
         epkgs.pdf-tools
         epkgs.pinentry
-        epkgs.projectile
         epkgs.platformio-mode
+        epkgs.projectile
         epkgs.rustic
-
-        epkgs.flycheck
-        epkgs.solidity-mode
-        epkgs.solidity-flycheck
-        epkgs.company-solidity
-
         epkgs.scad-mode
         epkgs.simple-httpd
+        epkgs.solidity-flycheck
+        epkgs.solidity-mode
         epkgs.sudo-edit
         epkgs.treemacs
         epkgs.treemacs-evil
@@ -1104,13 +1103,14 @@ on-notify=exec mpv /home/${vars.userName}/sounds/notification.wav --no-config --
         epkgs.treemacs-projectile
         epkgs.treesit-auto
         epkgs.typescript-mode
+        epkgs.unicode-fonts
         epkgs.use-package
         epkgs.vterm
-        epkgs.writeroom-mode
         epkgs.web-mode
         epkgs.websocket
         epkgs.which-key
         epkgs.writegood-mode
+        epkgs.writeroom-mode
         epkgs.yasnippet
         epkgs.yasnippet-snippets
       ];
@@ -1122,7 +1122,7 @@ on-notify=exec mpv /home/${vars.userName}/sounds/notification.wav --no-config --
       extraConfig = ''
       IMAPAccount ret2pop
       Host ${vars.imapsServer}
-      User ${vars.userName}
+      User ${vars.email}
       PassCmd "pass Mail"
       Port 993
       TLSType IMAPS
@@ -1245,6 +1245,7 @@ on-notify=exec mpv /home/${vars.userName}/sounds/notification.wav --no-config --
         "workspace 3, ^(.*fluffychat.*)$"
         "workspace 3, ^(.*element-desktop.*)$"
         "workspace 4, ^(.*qpwgraph.*)$"
+        "workspace 4, ^(.*mpv.*)$"
         "workspace 5, ^(.*Monero.*)$"
         "workspace 5, ^(.*org\.bitcoin\..*)$"
         "workspace 5, ^(.*Bitcoin Core - preston.*)$"

@@ -36,6 +36,7 @@
     "eDP-1"
     "DP-2"
     "DP-3"
+    "LVDS-1"
   ];
 
   # enable video drivers based on your system.
@@ -50,5 +51,5 @@
   # use false if this is your first install of continuity.
   # See https://github.com/nix-community/lanzaboote/blob/master/docs/QUICK_START.md
   # for more information.
-  secureBoot = true;
+  secureBoot = false;
 }
