@@ -138,12 +138,10 @@ if [ ! -d "$HOME/toughnix/" ]; then
 fi
 
 vim "$HOME/toughnix/desktop/vars.nix"
-DISK="$(gum --placeholder "Disk (ex: /dev/sda)")"
+DISK="$(gum input --placeholder "Disk (ex: /dev/sda)")"
 
-gum confirm  --default=false \
-        "🔥 🔥 🔥 WARNING!!!! This will ERASE ALL DATA on the disk $DISK. Are you sure you want to continue?"
-sudo nix run 'github:nix-community/disko/latest#disko-install' -- --write-efi-boot-entries --flake
-  './toughnix#continuity-dell' --disk main "$DISK"
+gum confirm  --default=false "🔥 🔥 🔥 WARNING!!!! This will ERASE ALL DATA on the disk $DISK. Are you sure you want to continue?"
+sudo nix run 'github:nix-community/disko/latest#disko-install' -- --write-efi-boot-entries --flake './toughnix#continuity-dell' --disk main "$DISK"
 '')
       ];
     };
