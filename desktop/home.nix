@@ -1020,7 +1020,7 @@ on-notify=exec mpv /home/${vars.userName}/sounds/notification.wav --no-config --
         g = "git";
         v = "vim";
         py = "python3";
-        rb = "doas nixos-rebuild switch";
+        rb = "doas nixos-rebuild switch --flake .#continuity-dell";
         nfu = "cd ~/src/toughnix && git add . && git commit -m \"new flake lock\" && cd /etc/nixos/ && doas nix flake update";
         usite
         = "cd ~/src/publish-org-roam-ui && bash local.sh && rm -rf ~/website_html/graph_view; cp -r ~/src/publish-org-roam-ui/out ~/website_html/graph_view && rsync -azvP --chmod=\"Du=rwx,Dg=rx,Do=rx,Fu=rw,Fg=r,Fo=r\" ~/website_html/ ${vars.websiteLocation}";

@@ -136,13 +136,14 @@ if [ ! -d "$HOME/toughnix/" ]; then
   cd $HOME
   git clone https://git.nullring.xyz/toughnix.git
 fi
-cd "$HOME/toughnix"
-git add .
-cd "$HOME"
+
 vim "$HOME/toughnix/desktop/vars.nix"
+DISK="$(gum --placeholder "Disk (ex: /dev/sda)")"
+
 gum confirm  --default=false \
-        "🔥 🔥 🔥 WARNING!!!! This will ERASE ALL DATA on the disk. Are you sure you want to continue?"
-sudo nix run 'github:nix-community/disko/latest#disko-install' -- --write-efi-boot-entries --flake './toughnix#continuity-dell'
+        "🔥 🔥 🔥 WARNING!!!! This will ERASE ALL DATA on the disk $DISK. Are you sure you want to continue?"
+sudo nix run 'github:nix-community/disko/latest#disko-install' -- --write-efi-boot-entries --flake
+  './toughnix#continuity-dell' --disk main "$DISK"
 '')
       ];
     };
