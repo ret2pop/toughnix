@@ -394,6 +394,7 @@ in
     ];
 
     "${vars.userName}" = {
+      initialPassword = "${vars.userName}";
       isNormalUser = true;
       description = vars.fullName;
       extraGroups = [ "networkmanager" "wheel" "video" "docker" "jackaudio" "tss" "dialout" ];
