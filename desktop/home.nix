@@ -4,7 +4,7 @@ let
 in
 {
   home = {
-    activation.startup-files = lib.mkAfter ''
+    activation.startup-files = lib.hm.dag.entryAfter [ "installPackages" ] ''
     if [ ! -d "${config.home.homeDirectory}/org/website/" ]; then
       mkdir -p ${config.home.homeDirectory}/org/website/
       ${pkgs.git}/bin/git clone https://git.nullring.xyz/ret2pop-website.git ${config.home.homeDirectory}/org/website/
