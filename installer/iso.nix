@@ -136,7 +136,7 @@ if [ ! -d "$HOME/toughnix/" ]; then
 fi
 vim "$HOME/toughnix/desktop/vars.nix"
 vim "$HOME/toughnix/desktop/sda-simple.nix"
-sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- --mode destroy,format,mount "$HOME/toughnix/disko/sda-simple.nix"
+sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- --mode destroy,format,mount "$HOME/toughnix/desktop/sda-simple.nix"
 cd /mnt
 
 sudo nixos-install --flake $HOME/toughnix#continuity
