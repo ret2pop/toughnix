@@ -131,11 +131,6 @@ if [ "$(id -u)" -eq 0 ]; then
   exit 1
 fi
 
-if [ ! -f "/tmp/secret.key" ]; then
-  echo "ERROR: You must create a passphrase in /tmp/secret.key for full disk encryption."
-  exit 1
-fi
-
 if [ ! -d "$HOME/toughnix/" ]; then
   cd $HOME
   git clone https://git.nullring.xyz/toughnix.git

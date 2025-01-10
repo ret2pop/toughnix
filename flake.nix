@@ -55,8 +55,8 @@
               })
           lanzaboote.nixosModules.lanzaboote
           ./desktop/configuration.nix
+          ./desktop/sda-simple.nix
           disko.nixosModules.disko
-          ./disko/sda-simple.nix
           home-manager.nixosModules.home-manager
           {
             home-manager = {

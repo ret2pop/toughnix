@@ -13,6 +13,7 @@ in
     if [ ! -d "${config.home.homeDirectory}/src/publish-org-roam-ui" ]; then
       mkdir -p ${config.home.homeDirectory}/src
       ${pkgs.git}/bin/git clone https://git.nullring.xyz/publish-org-roam-ui.git ${config.home.homeDirectory}/src/publish-org-roam-ui
+      ${pkgs.git}/bin/git clone https://git.nullring.xyz/toughnix.git ${config.home.homeDirectory}/src/toughnix
     fi
 
     if [ ! -d "${config.home.homeDirectory}/.password-store" ]; then
