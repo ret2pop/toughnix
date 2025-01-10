@@ -14,7 +14,7 @@ in
       mkdir -p ${config.home.homeDirectory}/src
       ${pkgs.git}/bin/git clone https://git.nullring.xyz/publish-org-roam-ui.git ${config.home.homeDirectory}/src/publish-org-roam-ui
     fi
-    
+
     if [ ! -d "${config.home.homeDirectory}/.password-store" ]; then
       ${pkgs.git}/bin/git clone ${vars.passwordRepo} ${config.home.homeDirectory}/.password-store
     fi
@@ -65,6 +65,17 @@ in
       graphviz
       grim
       gum
+      (writeShellScriptBin "post-install" ''
+if [ ! -d ~/toughnix ]; then
+   git clone https://git.nullring.xyz/toughnix.git ~/toughnix
+fi
+
+cd ~/toughnix
+vim desktop/vars.nix
+vim desktop/sda-simple.nix
+sudo nixos-rebuild switch --flake .#continuity
+echo "Post install done! Now install your ssh and gpg keys."
+'')
       helvum
       imagemagick
       inkscape
