@@ -5,9 +5,7 @@ in
 {
   imports = [];
 
-  hardware = {
-    enableRedistributableFirmware = true;
-  };
+  hardware.enableAllFirmware = true;
 
   documentation = {
     enable = true;
@@ -23,14 +21,6 @@ in
           '';
     };
   };
-  # environment = {
-  #   memoryAllocator.provider = "scudo";
-  #   variables.SCUDO_OPTIONS = "ZeroContents=1";
-  # };
-
-  # environment = {
-  #   memoryAllocator.provider = "graphene-hardened-light";
-  # };
 
   systemd = {
     coredump.enable = false;
@@ -359,15 +349,7 @@ in
     auditd.enable = true;
     audit.enable = true;
     chromiumSuidSandbox.enable = true;
-    sudo.enable = false;
-    doas = {
-      enable = true;
-      extraRules = [{
-        users = [ vars.userName ];
-        keepEnv = true;
-        persist = true;
-      }];
-    };
+    sudo.enable = true;
   };
 
   xdg.portal = {

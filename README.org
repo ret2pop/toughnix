@@ -14,8 +14,15 @@ You will have to interact with the installer three times. Two of those times wil
 for which you should read the files and make the intuitive changes based on the comments_{}^{}_{} in those
 files, and once will be to confirm that you want to wipe the disk.
 
-After this process, reboot and log into your user. You will immediately be taken into Hyprland,
-and Emacs and Firefox will autostart.
+After this process, reboot and log into your user with your username and the password being the
+username. You will immediately be taken into Hyprland, and Emacs and Firefox will autostart.
+Use Windows + Enter in order to spawn a terminal, and then run:
+#+begin_src shell
+  # connect to internet again
+  nmtui
+  post-install
+#+end_src
+use the same disko and variable settings you used when installing the first time.
 ** Troubleshooting
 If you encounter an error in home-manager after building (can't start the home-manager process
 because it can't resolve so-and-so hostname), run ~doas nixos-rebuild switch~, and possibly
