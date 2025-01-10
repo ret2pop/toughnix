@@ -158,3 +158,10 @@ Change my RSS feeds out in ~$HOME/org/website/config/elfeed.org~ with ones you w
 *** Website
 I update my website with the command ~usite~ (in the terminal). This will work by default if you
 set your ~vars.nix~ correctly and you have access to the server you're sshing through with rsync.
+* Building the Installer
+To build the installer, run this command in the flake:
+#+begin_src bash
+  nix build .#nixosConfigurations.installer.config.system.build.isoImage
+#+end_src
+this will put the resultant ISO image in ~./results/iso/~. You can then flash it with ~dd~ or any
+other method.

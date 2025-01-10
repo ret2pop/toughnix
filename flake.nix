@@ -28,13 +28,13 @@
 
   outputs = { nixpkgs, home-manager, nur, disko, lanzaboote, ... }@attrs: {
     nixosConfigurations = {
-      live = nixpkgs.lib.nixosSystem {
+      installer = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           ({pkgs, modulesPath, ...}: {
             imports = [(modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")];
           })
-          ./live/iso.nix
+          ./installer/iso.nix
         ];
       };
 
