@@ -38,7 +38,7 @@
         ];
       };
 
-      continuity-dell = nixpkgs.lib.nixosSystem {
+      continuity = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = attrs;
         modules = [

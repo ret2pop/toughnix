@@ -130,19 +130,16 @@ if [ "$(id -u)" -eq 0 ]; then
   echo "ERROR! $(basename "$0") should be run as a regular user"
   exit 1
 fi
-
 if [ ! -d "$HOME/toughnix/" ]; then
   cd $HOME
   git clone https://git.nullring.xyz/toughnix.git
 fi
 vim "$HOME/toughnix/desktop/vars.nix"
-vim "$HOME/toughnix/disko/sda-simple.nix"
-
-gum confirm  --default=false "🔥 🔥 🔥 WARNING!!!! This will ERASE ALL DATA on the disk. Are you sure you want to continue?"
+vim "$HOME/toughnix/desktop/sda-simple.nix"
 sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- --mode destroy,format,mount "$HOME/toughnix/disko/sda-simple.nix"
 cd /mnt
 
-sudo nixos-install --flake $HOME/toughnix#continuity-dell
+sudo nixos-install --flake $HOME/toughnix#continuity
 '')
       ];
     };

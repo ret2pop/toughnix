@@ -1,7 +1,7 @@
 # Change the following variables
 {
   # set your host name.
-  hostName = "continuity-dell";
+  hostName = "continuity";
 
   # username used for unix username as well as msmtp configuration name.
   userName = "preston";

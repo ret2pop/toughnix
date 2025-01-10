@@ -1,21 +1,18 @@
 * Introduction
-ToughNix is a configuration that centers around the usage of NixOS and Emacs, with vim-centric
-keybindings. Note that at the time of writing, This entire configuration uses the [[https://github.com/catppuccin/catppuccin][catppuccin theme]].
+Toughnix is a flake monorepo that handles my NixOS configurations for all my computers.
+The desktop centers around Emacs and Hyprland, and there will be a VPS configuration as well.
 ** Why Not EXWM?
 Because emacs is blocking, and I want to use wayland because it's much better and there's
 much less cruft.
-* Installation
-Install NixOS, get internet with ~nmtui~ or ethernet, install git (and maybe vim) on your NixOS system,
-and then on your NixOS system, run:
+* Desktop Installation (Continuity System)
+To install continuity, install the ISO on a usb. Get internet access with the
+command ~nmtui~, then run:
 #+begin_src shell
-  git clone https://git.nullring.xyz/toughnix.git
-  # change values as you see fit
-  vim toughnix/vars.nix
-  sudo nix run 'github:nix-community/disko/latest#disko-install' -- --flake 'toughnix#continuity-dell' --disk main /dev/[disk]
+  nix_installer
 #+end_src
-
-Note the line where we run ~nano~; during this period you should change any hardware or
-person-specific settings, and also alter ~configuration.nix~ more if you are using an encrypted drive.
+You will have to interact with the installer three times. Two of those times will be in ~vim~,
+for which you should read the files and make the intuitive changes based on the comments_{}^{}_{} in those
+files, and once will be to confirm that you want to wipe the disk.
 
 After this process, reboot and log into your user. You will immediately be taken into Hyprland,
 and Emacs and Firefox will autostart.
@@ -24,16 +21,21 @@ If you encounter an error in home-manager after building (can't start the home-m
 because it can't resolve so-and-so hostname), run ~doas nixos-rebuild switch~, and possibly
 wait a couple seconds before that. I've run into this issue before. Note that after building
 this system, my system uses ~doas~ instead of ~sudo~.
-* Usage
+** Desktop Usage
 On your first install, you will be greeted with firefox, as well as EMacs. If Waybar doesn't
 appear, run ~hyprctl monitors~ in a terminal (Windows key + Enter), and you should see the monitors
-listed. Then, edit ~/etc/nixos/vars.nix~ accordingly.
-** Hyprland
-*** Wallpaper
+listed. Then, edit ~~/src/toughnix/desktop/vars.nix~ accordingly, and rebuild the system with
+~cd ~/src/toughnix/desktop/vars.nix; rb~ (you may have to reset some of the options you configured
+earlier in the install phase).
+
+In general, this goes without saying, but you should rebuild your system when you want a change
+to take effect.
+*** Hyprland
+**** Wallpaper
 To change the wallpaper, change the ~swww add~ line in ~home.nix~ to another wallpaper in my
 [[https://github.com/ret2pop/wallpapers][wallpapers repository]].
-*** Keybindings
-**** Programs
+**** Keybindings
+***** Programs
 There are other programs too, but these are all you'll need to get started.
 #+begin_example
 Win + Return => kitty (Terminal)
@@ -44,7 +46,7 @@ Win + d => wofi (Run Launcher)
 Win + p => wofi (Powermenu)
 PrintScr => grim (screenshot; look for file in $HOME)
 #+end_example
-**** Commands
+***** Commands
 These commands are inspired by ~vim~.
 #+begin_example
 Win + q => kill window
@@ -57,7 +59,7 @@ Win + l => move window focus to right
 Win + k => move window focus up
 Win + j => move window focus down
 #+end_example
-** Passwords
+*** Passwords
 Passwords will be managed by sops-nix in the future, but for now they are managed
 with the ~pass~ password manager. To initialize the password store, see
 [[https://www.passwordstore.org/][the documentation]]. Be sure to add an entry called ~Mail~:
@@ -65,7 +67,7 @@ with the ~pass~ password manager. To initialize the password store, see
 pass add Mail
 #+end_src
 and enter your imaps and smtps password (they should be the same in this setup).
-** Email
+*** Email
 Email is done from within emacs with mu4e with ~SPC o m~. To initialize mail, run:
 #+begin_src shell
   mbsync ret2pop    # see mbsyncrc section of home.nix, change ret2pop to something else there
@@ -76,24 +78,24 @@ Email is done from within emacs with mu4e with ~SPC o m~. To initialize mail, ru
 #+end_src
 Note that a prerequisite is initializing ~pass~ and adding a ~Mail~ entry. Be sure to change the imaps
 and smtps address in the mbsync and msmtp configurations as well as the usernames.
-** Firefox
+*** Firefox
 On launch, make sure you enable all the plugins by going into the three bar tab on the right corner and
 enabling all the automatically installed extensions. Then, optionally, visit the
 [[https://github.com/catppuccin/firefox][catppuccin firefox theme]] website and use the Firefox Color install method.
-** Discord
+*** Discord
 Optionally, go to user settings > Vencord > Themes > Online Themes. Then, install [[https://github.com/catppuccin/discord][this theme]] by pasting the one-liner in:
 #+begin_src css
   @import url("https://catppuccin.github.io/discord/dist/catppuccin-mocha-pink.theme.css");
 #+end_src
-** Waybar
+*** Waybar
 If the bar is not displaying, get your monitor name with ~hyprctl monitors~. The battery percentage
 may not be displayed. If it isn't, then change ~BAT0~ with whatever you see when you run
 ~ls /sys/class/power_supply~, assuming you have a laptop with a battery. After that, it should work
 normally.
-** Music
+*** Music
 Place your music files in ~$HOME/music~ and run ~mpc update~, then ~mpc add /~.
 This should add all your music in ~$HOME/music~ to the playlist to be read by the emacs program ~emms~.
-** Emacs
+*** Emacs
 On first initialization, make sure to run:
 #+begin_src emacs-lisp
   M-x pdf-tools-install
@@ -103,7 +105,7 @@ On first initialization, make sure to run:
 then restart. This will make emacs look not ugly. Also edit the very top of
 ~~/org/website/config/emacs.org~, modify the parameters (email, full name, etc...) to your desired
 value.
-*** Keybindings
+**** Keybindings
 These are the keybindings that I have set up for emacs. All the other keybindings are ones that are default
 to the packages installed or the builtin emacs keybindings. Note that I also use evil-mode, so you're going
 to have to know vim keybindings. To get started with editing files, press space, and then
@@ -145,18 +147,14 @@ press period.
   SPC h m Manual
   SPC h r r Reload Config
 #+end_example
-*** IRC
+**** IRC
 In the config, replace the IRC configuration (server and name) with your own.
-*** ellama
+**** ellama
 Run ~ollama pull zephyr~ to get the zephyr ollama model.
-*** Mu4e
+**** Mu4e
 After following the email advice from above, change my mail address and name to your own.
-*** Elfeed
+**** Elfeed
 Change my RSS feeds out in ~$HOME/org/website/config/elfeed.org~ with ones you want to read.
-** Website
+*** Website
 I update my website with the command ~usite~ (in the terminal). This will work by default if you
 set your ~vars.nix~ correctly and you have access to the server you're sshing through with rsync.
-** Postamble
-Once you've done all those things, you can call the system yours! If you want to change anything
-about the system or fork it to remove any mention of me from the defaults, be my guest.
-If you want it to contain parts of my identity, that's also good.
