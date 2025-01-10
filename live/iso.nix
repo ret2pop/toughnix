@@ -146,6 +146,7 @@ vim "$HOME/toughnix/disko/sda-simple.nix"
 gum confirm  --default=false "🔥 🔥 🔥 WARNING!!!! This will ERASE ALL DATA on the disk. Are you sure you want to continue?"
 sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- --mode destroy,format,mount "$HOME/toughnix/disko/sda-simple.nix"
 cd /mnt
+
 sudo nixos-install --flake $HOME/toughnix#continuity-dell
 '')
       ];

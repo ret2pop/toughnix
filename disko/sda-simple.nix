@@ -1,17 +1,19 @@
-# CHANGE THE DISK YOU WANT TO FORMAT NOW
+# This will install a simple system with a root and boot partition.
+# Make sure to change the entry device entry to the one that you
+# are installing the configuration to.
 {
   disko.devices = {
     disk = {
-      main = {
-        type = "disk";
-        # CHANGEME change to the disk you want to format
+      my-disk = {
+        # change this entry
         device = "/dev/sda";
+        type = "disk";
         content = {
           type = "gpt";
           partitions = {
             ESP = {
-              size = "500M";
               type = "EF00";
+              size = "500M";
               content = {
                 type = "filesystem";
                 format = "vfat";
@@ -19,18 +21,12 @@
                 mountOptions = [ "umask=0077" ];
               };
             };
-            luks = {
+            root = {
               size = "100%";
               content = {
-                type = "luks";
-                name = "crypted";
-                settings.allowDiscards = true;
-                passwordFile = "/tmp/secret.key";
-                content = {
-                  type = "filesystem";
-                  format = "ext4";
-                  mountpoint = "/";
-                };
+                type = "filesystem";
+                format = "ext4";
+                mountpoint = "/";
               };
             };
           };

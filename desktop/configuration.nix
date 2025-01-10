@@ -5,6 +5,11 @@ in
 {
   imports = [];
 
+  hardware = {
+    cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+    enableRedistributableFirmware = true;
+  };
+
   documentation = {
     enable = true;
     man.enable = true;
@@ -42,7 +47,15 @@ in
     };
   };
 
+
   boot = {
+    extraModulePackages = [ ];
+
+    initrd = {
+      availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" ];
+      kernelModules = [ ];
+    };
+
     lanzaboote = {
       enable = vars.secureBoot;
       pkiBundle = "/etc/secureboot";
@@ -57,6 +70,7 @@ in
       "snd-seq"
       "snd-rawmidi"
       "xhci_hcd"
+      "kvm_intel"
     ];
 
     kernelParams = [
@@ -151,6 +165,7 @@ in
   };
 
   networking = {
+    useDHCP = lib.mkDefault true;
     hostName = vars.hostName;
     networkmanager = {
       enable = true;
@@ -300,9 +315,12 @@ in
     ssh.enableAskPassword = false;
   };
 
-  nixpkgs.config = {
-    allowUnfree = true;
-    cudaSupport = false;
+  nixpkgs = {
+    hostPlatform = lib.mkDefault "x86_64-linux";
+    config = {
+      allowUnfree = true;
+      cudaSupport = false;
+    };
   };
 
   security = {
