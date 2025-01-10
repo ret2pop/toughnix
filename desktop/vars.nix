@@ -1,3 +1,4 @@
+# Change the following variables
 {
   # set your host name.
   hostName = "continuity-dell";

@@ -126,9 +126,13 @@
           ''
 #!/usr/bin/env bash
 set -euo pipefail
-
 if [ "$(id -u)" -eq 0 ]; then
   echo "ERROR! $(basename "$0") should be run as a regular user"
+  exit 1
+fi
+
+if [ ! -f "/tmp/secret.key" ]; then
+  echo "ERROR: You must create a passphrase in /tmp/secret.key for full disk encryption."
   exit 1
 fi
 
@@ -136,12 +140,13 @@ if [ ! -d "$HOME/toughnix/" ]; then
   cd $HOME
   git clone https://git.nullring.xyz/toughnix.git
 fi
-
 vim "$HOME/toughnix/desktop/vars.nix"
-DISK="$(gum input --placeholder "Disk (ex: /dev/sda)")"
+vim "$HOME/toughnix/disko/sda-simple.nix"
 
-gum confirm  --default=false "🔥 🔥 🔥 WARNING!!!! This will ERASE ALL DATA on the disk $DISK. Are you sure you want to continue?"
-sudo nix run 'github:nix-community/disko/latest#disko-install' -- --write-efi-boot-entries --flake './toughnix#continuity-dell' --disk main "$DISK"
+gum confirm  --default=false "🔥 🔥 🔥 WARNING!!!! This will ERASE ALL DATA on the disk. Are you sure you want to continue?"
+sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- --mode destroy,format,mount "$HOME/toughnix/disko/sda-simple.nix"
+cd /mnt
+sudo nixos-install --flake $HOME/toughnix#continuity-dell
 '')
       ];
     };

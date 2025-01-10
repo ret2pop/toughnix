@@ -1,8 +1,10 @@
+# CHANGE THE DISK YOU WANT TO FORMAT NOW
 {
   disko.devices = {
     disk = {
       main = {
         type = "disk";
+        # CHANGEME change to the disk you want to format
         device = "/dev/sda";
         content = {
           type = "gpt";
