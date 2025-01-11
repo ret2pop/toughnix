@@ -5,6 +5,18 @@ in
 {
   imports = [];
 
+  sops = {
+    defaultSopsFile = ../secrets/secrets.yaml;
+    defaultSopsFormat = "yaml";
+    gnupg = {
+      home = "/home/${vars.userName}/.gnupg";
+      sshKeyPaths = [];
+    };
+    secrets.mail = {
+      format = "yaml";
+    };
+  };
+
   hardware.enableAllFirmware = true;
 
   documentation = {

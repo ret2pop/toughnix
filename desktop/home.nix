@@ -3,15 +3,6 @@ let
   vars = import ./vars.nix;
 in
 {
-  sops = {
-    defaultSopsFile = ../secrets/secrets.yaml;
-    defaultSopsFormat = "yaml";
-    gnupg = {
-      home = "${config.home.homeDirectory}/.gnupg";
-      sshKeyPaths = [];
-    };
-  };
-
   home = {
     activation.startup-files = lib.hm.dag.entryAfter [ "installPackages" ] ''
     if [ ! -d "${config.home.homeDirectory}/org/website/" ]; then
