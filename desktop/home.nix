@@ -1157,7 +1157,7 @@ on-notify=exec mpv /home/${vars.userName}/sounds/notification.wav --no-config --
       IMAPAccount ret2pop
       Host ${vars.imapsServer}
       User ${vars.email}
-      PassCmd "pass Mail"
+      PassCmd "cat ${config.sops.secrets.mail.path}"
       Port 993
       TLSType IMAPS
       AuthMechs *
@@ -1199,7 +1199,7 @@ on-notify=exec mpv /home/${vars.userName}/sounds/notification.wav --no-config --
       port           587
       from           ${vars.email}
       user           ${vars.email}
-      passwordeval   "pass Mail"
+      passwordeval   "cat ${config.sops.secrets.mail.path}"
 
 
       # Set a default account
