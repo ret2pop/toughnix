@@ -12,11 +12,9 @@
   # Create a new gpg key for this system or import your keys from another system
   gpgKey = "AEC273BF75B6F54D81343A1AC1FE6CED393AE6C1";
 
-  # If you're not forking my website, this value doesn't matter
-  websiteLocation = "root@nullring.xyz:/usr/share/nginx/ret2pop/";
-
-  # GPG encrypted password repository (leave as default value and change later if you don't have one)
-  passwordRepo = "https://git.nullring.xyz/passwords.git";
+  # Used for referencing the remote host in config. This mostly shouldn't matter if you are not
+  # using my website.
+  remoteHost = "nullring.xyz";
 
   # email used for `From` and also as your login email.
   email = "ret2pop@gmail.com";

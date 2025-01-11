@@ -1,4 +1,7 @@
 { pkgs, lib, ... }:
+let
+  commits = ./commits.nix;
+in
 {
   documentation = {
     enable = true;
@@ -126,20 +129,32 @@
           ''
 #!/usr/bin/env bash
 set -euo pipefail
+
 if [ "$(id -u)" -eq 0 ]; then
   echo "ERROR! $(basename "$0") should be run as a regular user"
   exit 1
 fi
+
+ping -q -c1 google.com &>/dev/null && echo "online! Proceeding with the installation..." || nmtui
+
 if [ ! -d "$HOME/toughnix/" ]; then
   cd $HOME
   git clone https://git.nullring.xyz/toughnix.git
+  cd toughnix
+  git checkout "${commits.toughnixCommitHash}"
+  cd $HOME
 fi
+
 vim "$HOME/toughnix/desktop/vars.nix"
 vim "$HOME/toughnix/desktop/sda-simple.nix"
-sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- --mode destroy,format,mount "$HOME/toughnix/desktop/sda-simple.nix"
+sudo nix --experimental-features "nix-command flakes" run "github:nix-community/disko/${commits.diskoCommitHash}" -- --mode destroy,format,mount "$HOME/toughnix/desktop/sda-simple.nix"
 cd /mnt
 
 sudo nixos-install --flake $HOME/toughnix#continuity
+sudo cp $HOME/toughnix "/mnt/home/$(ls /mnt/home/)/"
+echo "Installation complete! Rebooting..."
+sleep 3
+reboot
 '')
       ];
     };

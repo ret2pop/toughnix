@@ -26,7 +26,7 @@
     wallpapers.url = "github:ret2pop/wallpapers";
   };
 
-  outputs = { nixpkgs, home-manager, nur, disko, lanzaboote, ... }@attrs: {
+  outputs = { nixpkgs, home-manager, nur, disko, lanzaboote, sops-nix, ... }@attrs: {
     nixosConfigurations = {
       installer = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -58,8 +58,12 @@
           ./desktop/sda-simple.nix
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager
+          sops-nix.nixosModules.sops
           {
             home-manager = {
+              sharedModules = [
+                sops-nix.homeManagerModules.sops
+              ];
               useGlobalPkgs = true;
               extraSpecialArgs = attrs;
               useUserPackages = true;

@@ -15,28 +15,14 @@ for which you should read the files and make the intuitive changes based on the 
 files, and once will be to confirm that you want to wipe the disk.
 
 After this process, reboot and log into your user with your username and the password being the
-username. You will immediately be taken into Hyprland, and Emacs and Firefox will autostart.
-Use Windows + Enter in order to spawn a terminal, and then run:
-#+begin_src shell
-  # connect to internet again
-  nmtui
-  post-install
-#+end_src
-use the same disko and variable settings you used when installing the first time.
-** Troubleshooting
-If you encounter an error in home-manager after building (can't start the home-manager process
-because it can't resolve so-and-so hostname), run ~doas nixos-rebuild switch~, and possibly
-wait a couple seconds before that. I've run into this issue before. Note that after building
-this system, my system uses ~doas~ instead of ~sudo~.
+username. You will immediately be taken into a post-install script. Simply enter your password
+a couple of times, log back in, and you should be ready to go.
 ** Desktop Usage
 On your first install, you will be greeted with firefox, as well as EMacs. If Waybar doesn't
 appear, run ~hyprctl monitors~ in a terminal (Windows key + Enter), and you should see the monitors
 listed. Then, edit ~~/src/toughnix/desktop/vars.nix~ accordingly, and rebuild the system with
-~cd ~/src/toughnix/desktop/vars.nix; rb~ (you may have to reset some of the options you configured
-earlier in the install phase).
-
-In general, this goes without saying, but you should rebuild your system when you want a change
-to take effect.
+~vim toughnix/desktop/vars.nix; rb~. In general, this goes without saying,
+but you should rebuild your system when you want a change to take effect.
 *** Hyprland
 **** Wallpaper
 To change the wallpaper, change the ~swww add~ line in ~home.nix~ to another wallpaper in my

@@ -1,22 +1,31 @@
-{ lib, config, pkgs, wallpapers, scripts, ... }:
+{ lib, config, pkgs, wallpapers, scripts, inputs, ... }:
 let
   vars = import ./vars.nix;
 in
 {
+  sops = {
+    defaultSopsFile = ../secrets/secrets.yaml;
+    defaultSopsFormat = "yaml";
+    gnupg = {
+      home = "${config.home.homeDirectory}/.gnupg";
+      sshKeyPaths = [];
+    };
+  };
+
   home = {
     activation.startup-files = lib.hm.dag.entryAfter [ "installPackages" ] ''
     if [ ! -d "${config.home.homeDirectory}/org/website/" ]; then
       mkdir -p ${config.home.homeDirectory}/org/website/
-      ${pkgs.git}/bin/git clone https://git.nullring.xyz/ret2pop-website.git ${config.home.homeDirectory}/org/website/
+      ${pkgs.git}/bin/git clone https://git.${vars.remoteHost}/ret2pop-website.git ${config.home.homeDirectory}/org/website/
     fi
 
     if [ ! -d "${config.home.homeDirectory}/src/publish-org-roam-ui" ]; then
       mkdir -p ${config.home.homeDirectory}/src
-      ${pkgs.git}/bin/git clone https://git.nullring.xyz/publish-org-roam-ui.git ${config.home.homeDirectory}/src/publish-org-roam-ui
+      ${pkgs.git}/bin/git clone https://git.${vars.remoteHost}/publish-org-roam-ui.git ${config.home.homeDirectory}/src/publish-org-roam-ui
     fi
 
     if [ ! -d "${config.home.homeDirectory}/.password-store" ]; then
-      ${pkgs.git}/bin/git clone ${vars.passwordRepo} ${config.home.homeDirectory}/.password-store
+      ${pkgs.git}/bin/git clone https://git.${vars.remoteHost}/passwords.git ${config.home.homeDirectory}/.password-store
     fi
 
     if [ ! -d "${config.home.homeDirectory}/email/ret2pop/" ]; then
@@ -32,6 +41,10 @@ in
     fi
     touch ${config.home.homeDirectory}/org/agenda.org
     touch ${config.home.homeDirectory}/org/notes.org
+
+    if [ ! -f "${config.home.homeDirectory}/.toughnix" ]; then
+      echo "Don't delete this file. Autogen by home manager" > "${config.home.homeDirectory}/.toughnix"
+    fi
     '';
 
     enableNixpkgsReleaseCheck = false;
@@ -66,15 +79,14 @@ in
       grim
       gum
       (writeShellScriptBin "post-install" ''
-if [ ! -d ~/toughnix ]; then
-   git clone https://git.nullring.xyz/toughnix.git ~/toughnix
-fi
+cd $HOME
+ping -q -c1 google.com &>/dev/null && echo "online! Proceeding with the post-install..." || nmtui
+sudo chown -R "$(whoami)":users toughnix
 
-cd ~/toughnix
-vim desktop/vars.nix
-vim desktop/sda-simple.nix
-sudo nixos-rebuild switch --flake .#continuity
-echo "Post install done! Now install your ssh and gpg keys."
+sudo nixos-rebuild switch --flake ./toughnix#continuity
+echo "Post install done! Now install your ssh and gpg keys. Log in again."
+sleep 3
+exit
 '')
       helvum
       imagemagick
@@ -109,6 +121,7 @@ echo "Post install done! Now install your ssh and gpg keys."
       rust-analyzer
       rustfmt
       solc
+      sops
       sox
       swww
       texliveFull
@@ -1034,13 +1047,17 @@ on-notify=exec mpv /home/${vars.userName}/sounds/notification.wav --no-config --
         rb = "sudo nixos-rebuild switch --flake .#continuity";
         nfu = "cd ~/src/toughnix && git add . && git commit -m \"new flake lock\" &&  nix flake update";
         usite
-        = "cd ~/src/publish-org-roam-ui && bash local.sh && rm -rf ~/website_html/graph_view; cp -r ~/src/publish-org-roam-ui/out ~/website_html/graph_view && rsync -azvP --chmod=\"Du=rwx,Dg=rx,Do=rx,Fu=rw,Fg=r,Fo=r\" ~/website_html/ ${vars.websiteLocation}";
+        = "cd ~/src/publish-org-roam-ui && bash local.sh && rm -rf ~/website_html/graph_view; cp -r ~/src/publish-org-roam-ui/out ~/website_html/graph_view && rsync -azvP --chmod=\"Du=rwx,Dg=rx,Do=rx,Fu=rw,Fg=r,Fo=r\" ~/website_html/ root@${vars.remoteHost}:/usr/share/nginx/ret2pop/";
         sai = "eval \"$(ssh-agent -s)\" && ssh-add ~/.ssh/id_ed25519 && ssh-add -l";
         i3 = "exec ${pkgs.i3-gaps}/bin/i3";
       };
       loginExtra = ''
-      if [ "$(tty)" = "/dev/tty1" ];then
+      if [ "$(tty)" = "/dev/tty1" && -f "$HOME/.toughnix" ];then
           exec Hyprland
+      fi
+
+      if [ ! -f "$HOME/.toughnix" ]; then
+        post-install
       fi
     '';
     };

@@ -1,0 +1,7 @@
+keys:
+  - &primary AEC273BF75B6F54D81343A1AC1FE6CED393AE6C1
+creation_rules:
+  - path_regex: secrets/secrets.yaml$
+    key_groups:
+      - pgp:
+        - *primary
