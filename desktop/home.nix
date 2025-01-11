@@ -3,6 +3,19 @@ let
   vars = import ./vars.nix;
 in
 {
+  sops = {
+    defaultSopsFile = ../secrets/secrets.yaml;
+    age = {
+      keyFile = "${config.home.homeDirectory}/.ssh/keys.txt";
+    };
+    secrets.mail = {
+      format = "yaml";
+      path = "${config.sops.defaultSymlinkPath}/mail";
+    };
+    defaultSymlinkPath = "/run/user/1000/secrets";
+    defaultSecretsMountPoint = "/run/user/1000/secrets.d";
+  };
+
   home = {
     activation.startup-files = lib.hm.dag.entryAfter [ "installPackages" ] ''
     if [ ! -d "${config.home.homeDirectory}/org/website/" ]; then
@@ -45,6 +58,7 @@ in
     
     packages = with pkgs; [
       # kicad
+      age
       acpilight
       alsa-utils
       autobuild

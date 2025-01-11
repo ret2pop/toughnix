@@ -1,7 +1,7 @@
 keys:
-  - &primary AEC273BF75B6F54D81343A1AC1FE6CED393AE6C1
+  - &primary age165ul43e8rc0qwzz2f2q9cw02psm2mkudsrwavq2e0pxs280p64yqy2z0dr
 creation_rules:
   - path_regex: secrets/secrets.yaml$
     key_groups:
-      - pgp:
+      - age:
         - *primary
